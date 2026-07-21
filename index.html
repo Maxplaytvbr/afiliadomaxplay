@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff6b00">
+  <title>Gerador Max — Banners profissionais</title>
+  <meta name="description" content="Crie banners profissionais de filmes e séries com imagens oficiais do TMDB.">
+  <link rel="icon" href="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Gerador Max — Banners profissionais">
+  <meta property="og:description" content="Crie banners cinematográficos com imagens oficiais do TMDB">
+  <meta property="og:image" content="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png">
+  <meta property="og:type" content="website">
+  
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ===== RESET & ROOT ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    :root {
+      --orange: #ff6b00;
+      --orange-2: #ff8a33;
+      --orange-glow: rgba(255,107,0,0.35);
+      --dark-blue: #011624;
+      --page: #070c13;
+      --panel: #0d1520;
+      --panel-2: #121d2a;
+      --line: rgba(255,255,255,.09);
+      --muted: #93a0b2;
+      --text: #f8fafc;
+      --success: #2bd576;
+      --danger: #ff5a67;
+      --radius: 18px;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+      --transition: .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 82% -10%, var(--orange-glow), transparent 30%),
+        radial-gradient(circle at -10% 40%, rgba(0,105,160,.12), transparent 26%),
+        var(--page);
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; border: none; background: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--panel); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 999px; }
+
+    /* ===== HEADER ===== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 4vw, 42px);
+      background: rgba(7,12,19,.88);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--orange);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 25px var(--orange-glow);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .brand-mark img { width: 38px; height: 38px; object-fit: contain; }
+    .brand-copy strong { display: block; font-size: 18px; line-height: 1; }
+    .brand-copy span { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .ghost-btn, .primary-btn, .icon-btn {
+      border: 0;
+      border-radius: 12px;
+      min-height: 42px;
+      padding: 0 16px;
+      color: #fff;
+      transition: var(--transition);
+      font-weight: 500;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .ghost-btn { background: rgba(255,255,255,.07); border: 1px solid var(--line); }
+    .ghost-btn:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .primary-btn { background: var(--orange); font-weight: 700; box-shadow: 0 10px 24px var(--orange-glow); }
+    .primary-btn:hover { transform: translateY(-1px); background: #ff7a19; }
+    .primary-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .icon-btn { width: 42px; padding: 0; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid var(--line); }
+
+    .pro-badge {
+      background: linear-gradient(135deg, #ff6b00, #ff2d00);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      width: min(1440px, calc(100% - 32px));
+      margin: 34px auto 22px;
+      padding: clamp(24px, 4vw, 48px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(1,22,36,.95), rgba(12,19,29,.92));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      right: -180px;
+      top: -210px;
+      background: radial-gradient(circle, var(--orange-glow), transparent 68%);
+      pointer-events: none;
+    }
+    .eyebrow { color: var(--orange); font-weight: 700; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+    .hero h1 { margin: 8px 0 10px; max-width: 790px; font-size: clamp(30px, 4.5vw, 64px); line-height: 1.03; letter-spacing: -.04em; }
+    .hero p { margin: 0; max-width: 670px; color: #aeb8c5; font-size: clamp(14px, 1.4vw, 17px); }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 26px;
+      max-width: 760px;
+      position: relative;
+      z-index: 2;
+    }
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+    }
+    .search-box input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,0,.15); }
+    .search-box button { min-width: 128px; height: 54px; }
+
+    /* ===== MOVIE STRIP ===== */
+    .movie-strip-wrap {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto 24px;
+    }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+    .section-head h2 { margin: 0; font-size: 20px; }
+    .section-head span { color: var(--muted); font-size: 12px; }
+
+    .movie-strip {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 145px;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 0 12px;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+    }
+    .movie-card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      overflow: hidden;
+      background: var(--panel);
+      color: #fff;
+      text-align: left;
+      padding: 0;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .movie-card:hover { transform: translateY(-4px); border-color: var(--orange); box-shadow: 0 8px 30px rgba(255,107,0,.15); }
+    .movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; background: #17212d; }
+    .movie-card div { padding: 9px 10px 11px; }
+    .movie-card strong { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .movie-card small { color: var(--muted); font-size: 10px; }
+
+    /* ===== WORKSPACE ===== */
+    .workspace {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: minmax(310px, 400px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .editor-panel, .preview-panel {
+      border: 1px solid var(--line);
+      background: rgba(13,21,32,.92);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+    }
+    .editor-panel { padding: 20px; position: sticky; top: 88px; max-height: calc(100vh - 106px); overflow-y: auto; }
+    .preview-panel { padding: 20px; min-height: 780px; }
+
+    .panel-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+    .panel-title h2 { margin: 0; font-size: 18px; }
+    .step-pill { color: var(--orange); background: rgba(255,107,0,.12); border: 1px solid rgba(255,107,0,.22); border-radius: 999px; font-size: 10px; padding: 5px 12px; font-weight: 600; }
+
+    .control-group { padding: 16px 0; border-top: 1px solid var(--line); }
+    .control-group:first-of-type { border-top: 0; padding-top: 0; }
+    .control-label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 600; gap: 8px; }
+    .control-label small { color: var(--muted); font-weight: 400; }
+
+    .input, .textarea, .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #0a111b;
+      color: #fff;
+      border-radius: 11px;
+      padding: 11px 14px;
+      outline: none;
+      font-size: 13px;
+      transition: var(--transition);
+    }
+    .textarea { min-height: 70px; resize: vertical; font-family: inherit; }
+    .input:focus, .textarea:focus, .select:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,0,.1); }
+    .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2393a0b2' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .segmented { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .segment-btn {
+      border: 1px solid var(--line);
+      color: #cbd5e1;
+      background: rgba(255,255,255,.04);
+      border-radius: 10px;
+      padding: 9px 6px;
+      font-size: 11px;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    .segment-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); box-shadow: 0 4px 15px var(--orange-glow); }
+    .segment-btn:hover:not(.active) { background: rgba(255,255,255,.08); }
+
+    /* ===== TEMPLATE GRID COM PREVIEW ===== */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .template-btn {
+      position: relative;
+      border: 2px solid var(--line);
+      background: rgba(255,255,255,.035);
+      border-radius: 14px;
+      padding: 8px;
+      color: #fff;
+      text-align: left;
+      transition: var(--transition);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .template-btn:hover { transform: translateY(-2px); border-color: rgba(255,107,0,.45); }
+    .template-btn.active { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(255,107,0,.14); background: rgba(255,107,0,.06); }
+    .template-thumb {
+      aspect-ratio: 16/10;
+      border-radius: 9px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      position: relative;
+      background: #1b2734;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .template-thumb .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .template-thumb .thumb-overlay span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255,107,0,.85);
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+    .template-btn:hover .thumb-overlay { background: rgba(0,0,0,.3); }
+    .template-meta { padding: 0 2px 2px; }
+    .template-btn strong { display: block; font-size: 11px; }
+    .template-btn small { display: block; color: var(--muted); font-size: 9px; line-height: 1.35; }
+    .template-badge {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 2;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(255,107,0,.92);
+      color: #fff;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .template-badge.new { background: #00c853; }
+    .template-badge.popular { background: #ff6b00; }
+
+    /* ===== IMAGE PICKER ===== */
+    .image-picker {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 88px;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .image-option {
+      width: 88px;
+      height: 56px;
+      padding: 0;
+      border-radius: 9px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      background: #111b27;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .image-option.active { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,0,.15); }
+    .image-option img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ===== RANGE ===== */
+    .range {
+      width: 100%;
+      accent-color: var(--orange);
+      height: 6px;
+      border-radius: 999px;
+      background: var(--line);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+      box-shadow: 0 0 20px var(--orange-glow);
+    }
+    .range::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ===== SWITCH ===== */
+    .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
+    .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #303b49;
+      border-radius: 999px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    .switch input:checked + .slider { background: var(--orange); }
+    .switch input:checked + .slider::before { transform: translateX(18px); }
+
+    /* ===== UPLOAD ===== */
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 44px;
+      border: 1.5px dashed rgba(255,255,255,.2);
+      color: #cbd5e1;
+      background: rgba(255,255,255,.035);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 12px;
+    }
+    .upload-btn:hover { border-color: var(--orange); color: #fff; background: rgba(255,107,0,.06); }
+
+    /* ===== PREVIEW ===== */
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .preview-topbar h2 { margin: 0; font-size: 18px; }
+    .preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(43,213,118,.10);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .6; transform: scale(.9); }
+    }
+
+    .stage-shell {
+      min-height: 700px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      border-radius: 14px;
+      background:
+        linear-gradient(45deg, #101722 25%, transparent 25%),
+        linear-gradient(-45deg, #101722 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #101722 75%),
+        linear-gradient(-45deg, transparent 75%, #101722 75%),
+        #0c131d;
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      overflow: auto;
+      position: relative;
+    }
+    .stage-shell .scale-hint {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-size: 10px;
+      color: var(--muted);
+      background: rgba(0,0,0,.6);
+      padding: 4px 12px;
+      border-radius: 999px;
+      pointer-events: none;
+      opacity: .5;
+    }
+
+    #banner-scale-wrap { transform-origin: center; }
+    #banner {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: #10151b;
+      box-shadow: 0 20px 70px rgba(0,0,0,.5);
+      color: #fff;
+      isolation: isolate;
+    }
+    #banner.format-story { width: 1080px; height: 1920px; }
+    #banner.format-landscape { width: 1920px; height: 1080px; }
+
+    /* ===== BANNER ELEMENTS ===== */
+    .banner-bg { position: absolute; inset: -3%; width: 106%; height: 106%; object-fit: cover; object-position: center; z-index: -4; }
+    .banner-poster { position: absolute; object-fit: cover; box-shadow: 0 28px 70px rgba(0,0,0,.45); display: none; z-index: 2; }
+    .banner-shade { position: absolute; inset: 0; z-index: -3; transition: opacity .3s; }
+    .banner-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+      opacity: .06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.26'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+    .safe-border { position: absolute; inset: 34px; border: 1px solid rgba(255,255,255,.06); pointer-events: none; display: none; z-index: 9; }
+    .banner-content { position: absolute; z-index: 3; }
+    .banner-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .banner-kicker::before {
+      content: "";
+      width: 52px;
+      height: 5px;
+      background: var(--accent, #ff6b00);
+      flex-shrink: 0;
+    }
+    .banner-title {
+      margin: 24px 0 14px;
+      max-width: 780px;
+      font-family: "Bebas Neue", "Impact", system-ui, sans-serif;
+      font-size: 118px;
+      line-height: .89;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      text-shadow: 0 8px 36px rgba(0,0,0,.32);
+    }
+    .banner-subtitle {
+      margin: 0;
+      max-width: 660px;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 30px;
+      line-height: 1.28;
+      color: rgba(255,255,255,.88);
+    }
+    .banner-meta {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 22px;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 20px;
+      color: rgba(255,255,255,.78);
+    }
+    .banner-meta span + span::before {
+      content: "•";
+      margin-right: 14px;
+      color: var(--accent, #ff6b00);
+    }
+    .brand-logo {
+      position: absolute;
+      z-index: 4;
+      width: 150px;
+      height: 110px;
+      object-fit: contain;
+      right: 56px;
+      top: 50px;
+      filter: drop-shadow(0 8px 15px rgba(0,0,0,.28));
+    }
+    .bottom-line {
+      position: absolute;
+      z-index: 3;
+      left: 62px;
+      right: 62px;
+      bottom: 48px;
+      height: 1px;
+      background: rgba(255,255,255,.26);
+    }
+    .bottom-line::after {
+      content: "GERADOR MAX";
+      position: absolute;
+      right: 0;
+      top: 12px;
+      color: rgba(255,255,255,.65);
+      font-size: 13px;
+      letter-spacing: .2em;
+    }
+
+    /* ===== TEMPLATE: EDITORIAL ===== */
+    #banner[data-template="editorial"] .banner-shade { background: linear-gradient(90deg, rgba(3,8,13,.94) 0%, rgba(3,8,13,.77) 42%, rgba(3,8,13,.08) 78%), linear-gradient(0deg, rgba(0,0,0,.45), transparent 46%); }
+    #banner[data-template="editorial"] .banner-content { left: 66px; bottom: 110px; width: 58%; }
+
+    /* ===== TEMPLATE: CINEMA ===== */
+    #banner[data-template="cinema"] .banner-shade { background: linear-gradient(0deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.14) 65%), linear-gradient(90deg, rgba(0,0,0,.25), transparent 55%); }
+    #banner[data-template="cinema"] .banner-content { left: 66px; right: 66px; bottom: 86px; width: auto; text-align: center; }
+    #banner[data-template="cinema"] .banner-title { margin-left: auto; margin-right: auto; max-width: 900px; font-size: 124px; }
+    #banner[data-template="cinema"] .banner-subtitle { margin-left: auto; margin-right: auto; }
+    #banner[data-template="cinema"] .banner-kicker { justify-content: center; }
+    #banner[data-template="cinema"] .banner-meta { justify-content: center; }
+    #banner[data-template="cinema"] .bottom-line { display: none; }
+
+    /* ===== TEMPLATE: POSTER ===== */
+    #banner[data-template="poster"] .banner-bg { filter: blur(16px) saturate(.7); transform: scale(1.12); }
+    #banner[data-template="poster"] .banner-shade { background: linear-gradient(90deg, rgba(2,8,12,.25), rgba(2,8,12,.96) 55%), rgba(1,10,16,.40); }
+    #banner[data-template="poster"] .banner-poster { display: block; left: 64px; top: 110px; width: 390px; height: 585px; border-radius: 8px; }
+    #banner[data-template="poster"] .banner-content { left: 510px; right: 60px; top: 215px; }
+    #banner[data-template="poster"] .banner-title { font-size: 102px; }
+
+    /* ===== TEMPLATE: RELEASE ===== */
+    #banner[data-template="release"] .banner-shade { background: linear-gradient(90deg, rgba(0,0,0,.90), rgba(0,0,0,.18) 70%), linear-gradient(0deg, rgba(0,0,0,.64), transparent 62%); }
+    #banner[data-template="release"]::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      width: 410px;
+      height: 130%;
+      right: -110px;
+      top: -15%;
+      background: var(--accent, #ff6b00);
+      transform: rotate(10deg);
+      opacity: .92;
+    }
+    #banner[data-template="release"] .banner-content { left: 66px; bottom: 112px; width: 59%; }
+    #banner[data-template="release"] .brand-logo { z-index: 5; }
+
+    /* ===== TEMPLATE: MINIMAL ===== */
+    #banner[data-template="minimal"] .banner-shade { background: linear-gradient(90deg, rgba(0,0,0,.84) 0%, rgba(0,0,0,.08) 60%), linear-gradient(0deg, rgba(0,0,0,.44), transparent 55%); }
+    #banner[data-template="minimal"] .banner-content { left: 66px; top: 50%; transform: translateY(-50%); width: 52%; }
+    #banner[data-template="minimal"] .banner-title { font-family: "DM Sans", system-ui, sans-serif; font-weight: 700; font-size: 82px; line-height: 1.02; text-transform: none; letter-spacing: -.04em; }
+    #banner[data-template="minimal"] .banner-meta, #banner[data-template="minimal"] .bottom-line { display: none; }
+
+    /* ===== TEMPLATE: RECOMMENDATION ===== */
+    #banner[data-template="recommendation"] .banner-shade { background: linear-gradient(90deg, rgba(0,0,0,.90), rgba(0,0,0,.24) 65%), linear-gradient(0deg, rgba(0,0,0,.50), transparent); }
+    #banner[data-template="recommendation"] .banner-content { left: 66px; bottom: 118px; width: 62%; padding-left: 28px; border-left: 8px solid var(--accent, #ff6b00); }
+    #banner[data-template="recommendation"] .banner-kicker::before { display: none; }
+
+    /* ===== TEMPLATE: SPECTRUM (NOVO) ===== */
+    #banner[data-template="spectrum"] .banner-shade { background: linear-gradient(135deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.12) 70%), linear-gradient(0deg, rgba(0,0,0,.3), transparent); }
+    #banner[data-template="spectrum"] .banner-content { left: 66px; right: 66px; bottom: 120px; width: auto; text-align: center; }
+    #banner[data-template="spectrum"] .banner-title { font-size: 140px; background: linear-gradient(135deg, var(--accent, #ff6b00), #ff2d00, #ff6b00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: none; margin: 8px 0; }
+    #banner[data-template="spectrum"] .banner-kicker { justify-content: center; }
+    #banner[data-template="spectrum"] .banner-kicker::before { display: none; }
+    #banner[data-template="spectrum"] .banner-subtitle { margin-left: auto; margin-right: auto; max-width: 700px; }
+    #banner[data-template="spectrum"] .banner-meta { justify-content: center; }
+    #banner[data-template="spectrum"] .bottom-line { display: none; }
+
+    /* ===== TEMPLATE: VINTAGE (NOVO) ===== */
+    #banner[data-template="vintage"] .banner-shade { background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.85) 100%); }
+    #banner[data-template="vintage"] .banner-bg { filter: sepia(.4) contrast(1.1) saturate(.8); }
+    #banner[data-template="vintage"] .banner-content { left: 66px; bottom: 120px; width: 52%; }
+    #banner[data-template="vintage"] .banner-title { font-family: "DM Sans", system-ui, sans-serif; font-size: 96px; text-transform: none; letter-spacing: -.02em; font-weight: 700; }
+    #banner[data-template="vintage"] .banner-kicker::before { background: var(--accent, #ff6b00); height: 3px; width: 80px; }
+    #banner[data-template="vintage"] .bottom-line::after { content: "✦ GERADOR MAX ✦"; }
+
+    /* ===== FORMAT ADJUSTMENTS ===== */
+    #banner.format-story .banner-content { left: 76px !important; right: 76px !important; bottom: 170px !important; top: auto !important; width: auto !important; transform: none !important; text-align: left !important; }
+    #banner.format-story .banner-title { font-size: 150px !important; max-width: 880px; }
+    #banner.format-story .banner-subtitle { font-size: 38px; }
+    #banner.format-story .banner-kicker { font-size: 24px; }
+    #banner.format-story .brand-logo { width: 180px; height: 130px; right: 66px; top: 70px; }
+    #banner.format-story[data-template="poster"] .banner-poster { left: 76px; top: 250px; width: 480px; height: 720px; }
+    #banner.format-story[data-template="poster"] .banner-content { bottom: 170px !important; }
+    #banner.format-story[data-template="release"]::after { width: 420px; right: -190px; }
+    #banner.format-story[data-template="spectrum"] .banner-title { font-size: 180px !important; }
+    #banner.format-story[data-template="vintage"] .banner-title { font-size: 120px !important; }
+
+    #banner.format-landscape .banner-content { left: 100px; bottom: 92px; width: 48%; }
+    #banner.format-landscape .banner-title { font-size: 128px; max-width: 840px; }
+    #banner.format-landscape .brand-logo { width: 170px; height: 120px; right: 78px; top: 58px; }
+    #banner.format-landscape .bottom-line { left: 100px; right: 100px; }
+    #banner.format-landscape[data-template="cinema"] .banner-content { width: auto; left: 100px; right: 100px; }
+    #banner.format-landscape[data-template="poster"] .banner-poster { left: 100px; top: 120px; width: 390px; height: 585px; }
+    #banner.format-landscape[data-template="poster"] .banner-content { left: 560px; top: 220px; right: 100px; width: auto; }
+    #banner.format-landscape[data-template="release"]::after { right: -80px; width: 500px; }
+    #banner.format-landscape[data-template="spectrum"] .banner-title { font-size: 160px !important; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 100;
+      max-width: 380px;
+      padding: 14px 20px;
+      color: #fff;
+      background: #152130;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--orange);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: var(--transition);
+      font-size: 13px;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.success { border-left-color: var(--success); }
+
+    .loading { opacity: .55; pointer-events: none; }
+    .empty-state { color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; padding: 18px; font-size: 12px; text-align: center; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 1fr; }
+      .editor-panel { position: static; max-height: none; }
+      .preview-panel { min-height: auto; }
+      .stage-shell { min-height: 580px; }
+    }
+
+    @media (max-width: 640px) {
+      .app-header { height: 64px; padding: 0 14px; }
+      .brand-copy span { display: none; }
+      .brand-copy strong { font-size: 15px; }
+      .brand-mark { width: 38px; height: 38px; }
+      .header-actions .ghost-btn { display: none; }
+      .hero, .workspace, .movie-strip-wrap { width: min(100% - 20px, 1440px); }
+      .hero { margin-top: 18px; border-radius: 20px; padding: 20px; }
+      .search-box { flex-direction: column; }
+      .search-box button { height: 48px; min-width: auto; }
+      .workspace { margin-bottom: 24px; }
+      .preview-panel, .editor-panel { border-radius: 14px; padding: 14px; }
+      .preview-topbar { align-items: flex-start; flex-direction: column; }
+      .preview-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .preview-actions .primary-btn { grid-column: 1 / -1; }
+      .template-grid { grid-template-columns: 1fr 1fr; }
+      .stage-shell { min-height: 380px; padding: 12px; }
+      .row { grid-template-columns: 1fr; }
+      #banner { transform-origin: top left; }
+      .brand-logo { width: 100px !important; height: 80px !important; right: 30px !important; top: 30px !important; }
+      #banner .banner-title { font-size: 60px !important; }
+      #banner .banner-subtitle { font-size: 18px !important; }
+      #banner .banner-content { left: 30px !important; bottom: 60px !important; }
+      #banner.format-story .banner-title { font-size: 80px !important; }
+      #banner.format-story .banner-content { left: 40px !important; right: 40px !important; bottom: 100px !important; }
+      #banner[data-template="poster"] .banner-poster { width: 160px !important; height: 240px !important; left: 30px !important; top: 50px !important; }
+      #banner[data-template="poster"] .banner-content { left: 220px !important; top: 80px !important; right: 30px !important; }
+      #banner[data-template="spectrum"] .banner-title { font-size: 72px !important; }
+      #banner[data-template="vintage"] .banner-title { font-size: 52px !important; }
+      .bottom-line { display: none !important; }
+      .toast { max-width: calc(100% - 36px); right: 18px; bottom: 18px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark"><img src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" alt="Gerador Max"></div>
+      <div class="brand-copy"><strong>Gerador Max</strong><span>Design para entretenimento</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="ghost-btn" id="resetBtn">🔄 Novo projeto</button>
+      <button class="ghost-btn" id="saveProjectBtn">💾 Salvar</button>
+      <button class="primary-btn" id="headerExportBtn">📤 Compartilhar</button>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <span class="eyebrow">✨ Ferramenta oficial MaxPlay</span>
+    <h1>Banners profissionais, <br>sem aparência de IA.</h1>
+    <p>Escolha um filme ou série, selecione uma imagem oficial e aplique um template gráfico limpo. O layout permanece consistente; você controla o conteúdo.</p>
+    <div class="search-box">
+      <input id="mainSearch" type="search" placeholder="Pesquise por filme ou série..." autocomplete="off">
+      <button class="primary-btn" id="searchBtn">🔍 Pesquisar</button>
+    </div>
+  </section>
+
+  <!-- ===== MOVIE STRIP ===== -->
+  <section class="movie-strip-wrap">
+    <div class="section-head">
+      <div><span class="eyebrow">🎬 Seleção automática</span><h2 id="stripTitle">Em alta hoje</h2></div>
+      <span>Toque em um título para começar</span>
+    </div>
+    <div class="movie-strip" id="movieStrip"><div class="empty-state">Carregando títulos do TMDB...</div></div>
+  </section>
+
+  <!-- ===== WORKSPACE ===== -->
+  <main class="workspace" id="workspace">
+    <aside class="editor-panel">
+      <div class="panel-title"><h2>🎨 Editor</h2><span class="step-pill">8 templates</span></div>
+
+      <!-- Formato -->
+      <div class="control-group">
+        <div class="control-label"><span>📐 Formato</span><small id="formatSize">1080 × 1080</small></div>
+        <div class="segmented" id="formatControls">
+          <button class="segment-btn active" data-format="square">📱 Feed</button>
+          <button class="segment-btn" data-format="story">📲 Story</button>
+          <button class="segment-btn" data-format="landscape">🖥️ Horizontal</button>
+        </div>
+      </div>
+
+      <!-- Templates com preview -->
+      <div class="control-group">
+        <div class="control-label"><span>🧩 Template</span><small>8 modelos</small></div>
+        <div class="template-grid" id="templateGrid">
+          <button class="template-btn active" data-template="editorial">
+            <span class="template-badge popular">🔥</span>
+            <div class="template-thumb" id="thumb-editorial"><div class="thumb-overlay"><span>Editorial</span></div></div>
+            <div class="template-meta"><strong>Max Editorial</strong><small>Clássico com texto lateral</small></div>
+          </button>
+          <button class="template-btn" data-template="cinema">
+            <div class="template-thumb" id="thumb-cinema"><div class="thumb-overlay"><span>Cinema</span></div></div>
+            <div class="template-meta"><strong>Max Cinema</strong><small>Título central imponente</small></div>
+          </button>
+          <button class="template-btn" data-template="poster">
+            <div class="template-thumb" id="thumb-poster"><div class="thumb-overlay"><span>Poster</span></div></div>
+            <div class="template-meta"><strong>Max Poster</strong><small>Pôster em destaque</small></div>
+          </button>
+          <button class="template-btn" data-template="release">
+            <span class="template-badge new">✨</span>
+            <div class="template-thumb" id="thumb-release"><div class="thumb-overlay"><span>Estreia</span></div></div>
+            <div class="template-meta"><strong>Max Estreia</strong><small>Visual de lançamento</small></div>
+          </button>
+          <button class="template-btn" data-template="minimal">
+            <div class="template-thumb" id="thumb-minimal"><div class="thumb-overlay"><span>Clean</span></div></div>
+            <div class="template-meta"><strong>Max Clean</strong><small>Minimalista e elegante</small></div>
+          </button>
+          <button class="template-btn" data-template="recommendation">
+            <div class="template-thumb" id="thumb-recommendation"><div class="thumb-overlay"><span>Indica</span></div></div>
+            <div class="template-meta"><strong>Max Indica</strong><small>Curadoria editorial</small></div>
+          </button>
+          <button class="template-btn" data-template="spectrum">
+            <span class="template-badge new">🌈</span>
+            <div class="template-thumb" id="thumb-spectrum"><div class="thumb-overlay"><span>Espectro</span></div></div>
+            <div class="template-meta"><strong>Max Espectro</strong><small>Título colorido vibrante</small></div>
+          </button>
+          <button class="template-btn" data-template="vintage">
+            <div class="template-thumb" id="thumb-vintage"><div class="thumb-overlay"><span>Vintage</span></div></div>
+            <div class="template-meta"><strong>Max Vintage</strong><small>Estilo retrô cinematográfico</small></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Imagens -->
+      <div class="control-group">
+        <div class="control-label"><span>🖼️ Imagem oficial</span><small>TMDB</small></div>
+        <div class="image-picker" id="imagePicker"><div class="empty-state">Escolha um título acima.</div></div>
+      </div>
+
+      <!-- Textos -->
+      <div class="control-group">
+        <div class="control-label"><span>✏️ Textos</span><small>Personalize</small></div>
+        <label class="control-label"><small>Selo</small></label>
+        <input class="input" id="kickerInput" value="NOVO NO CATÁLOGO" maxlength="32">
+        <label class="control-label" style="margin-top:12px"><small>Título</small></label>
+        <textarea class="textarea" id="titleInput" maxlength="70">Escolha um filme</textarea>
+        <label class="control-label" style="margin-top:12px"><small>Subtítulo</small></label>
+        <textarea class="textarea" id="subtitleInput" maxlength="110">Selecione um título acima para carregar as informações.</textarea>
+      </div>
+
+      <!-- Aparência -->
+      <div class="control-group">
+        <div class="control-label"><span>🎨 Aparência</span><small>Controle fino</small></div>
+        <div class="row">
+          <div><label class="control-label"><small>Cor destaque</small></label><input class="input" id="accentInput" type="color" value="#ff6b00" style="height:45px;padding:5px;cursor:pointer;"></div>
+          <div><label class="control-label"><small>Enquadramento</small></label><select class="select" id="positionSelect"><option value="center">Centro</option><option value="left">Esquerda</option><option value="right">Direita</option><option value="top">Topo</option></select></div>
+        </div>
+        <label class="control-label" style="margin-top:12px"><span>🔍 Zoom</span><small id="zoomValue">100%</small></label>
+        <input class="range" id="zoomRange" type="range" min="100" max="150" value="100">
+        <label class="control-label" style="margin-top:12px"><span>🌑 Escurecimento</span><small id="shadeValue">100%</small></label>
+        <input class="range" id="shadeRange" type="range" min="40" max="130" value="100">
+      </div>
+
+      <!-- Marca -->
+      <div class="control-group">
+        <div class="control-label"><span>🏷️ Marca</span><small>Personalizada</small></div>
+        <label class="upload-btn" for="logoUpload">📤 Enviar logomarca</label>
+        <input id="logoUpload" type="file" accept="image/*" hidden>
+        <div class="switch-row" style="margin-top:12px"><span>Exibir logomarca</span><label class="switch"><input id="logoToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="switch-row" style="margin-top:12px"><span>Exibir ano e gênero</span><label class="switch"><input id="metaToggle" type="checkbox" checked><span class="slider"></span></label></div>
+      </div>
+    </aside>
+
+    <!-- ===== PREVIEW ===== -->
+    <section class="preview-panel">
+      <div class="preview-topbar">
+        <div><span style="font-size:11px;color:var(--muted)"><span class="status-dot"></span>Prévia em tempo real</span><h2>📺 Seu banner</h2></div>
+        <div class="preview-actions">
+          <button class="ghost-btn" id="downloadBtn">⬇️ PNG</button>
+          <button class="primary-btn" id="exportBtn">📤 Compartilhar</button>
+        </div>
+      </div>
+
+      <div class="stage-shell" id="stageShell">
+        <div id="banner-scale-wrap">
+          <div id="banner" data-template="editorial" class="format-square">
+            <img class="banner-bg" id="bannerBg" alt="Fundo" crossorigin="anonymous">
+            <div class="banner-shade" id="bannerShade"></div>
+            <img class="banner-poster" id="bannerPoster" alt="Pôster" crossorigin="anonymous">
+            <img class="brand-logo" id="brandLogo" alt="Logomarca" src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" crossorigin="anonymous">
+            <div class="banner-content">
+              <div class="banner-kicker" id="bannerKicker">NOVO NO CATÁLOGO</div>
+              <h2 class="banner-title" id="bannerTitle">Escolha um filme</h2>
+              <p class="banner-subtitle" id="bannerSubtitle">Selecione um título acima para carregar as informações.</p>
+              <div class="banner-meta" id="bannerMeta"><span>2026</span><span>Filmes e séries</span></div>
+            </div>
+            <div class="bottom-line"></div>
+            <div class="safe-border"></div>
+            <div class="banner-grain"></div>
+          </div>
+        </div>
+        <span class="scale-hint">🔍 Clique na imagem para ampliar</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ============================================================ -->
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    (function() {
+      'use strict';
+
+      // ===== CONFIG =====
+      const TMDB_API_KEY = "54b9cff0f48a3f127fa5cd5906bbe251";
+      const TMDB_BASE = "https://api.themoviedb.org/3";
+      const TMDB_IMAGE = "https://image.tmdb.org/t/p/original";
+      const TMDB_POSTER = "https://image.tmdb.org/t/p/w500";
+      const DEFAULT_LOGO = "https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png";
+
+      // ===== STATE =====
+      const state = {
+        format: "square",
+        template: "editorial",
+        item: null,
+        details: null,
+        images: [],
+        selectedImage: "",
+        poster: "",
+        logo: localStorage.getItem("geradorMaxLogo") || DEFAULT_LOGO,
+        accent: "#ff6b00",
+        zoom: 100,
+        shade: 100,
+        position: "center"
+      };
+
+      // ===== DOM REFS =====
+      const $ = id => document.getElementById(id);
+      const banner = $("banner");
+      const toast = $("toast");
+
+      // ===== TOAST =====
+      function notify(message, type = "info") {
+        toast.textContent = message;
+        toast.className = "toast";
+        if (type === "error") toast.classList.add("error");
+        if (type === "success") toast.classList.add("success");
+        toast.classList.add("show");
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+      }
+
+      // ===== API =====
+      async function api(path, params = {}) {
+        const query = new URLSearchParams({ api_key: TMDB_API_KEY, language: "pt-BR", ...params });
+        const res = await fetch(`${TMDB_BASE}${path}?${query}`);
+        if (!res.ok) throw new Error(`TMDB ${res.status}`);
+        return res.json();
+      }
+
+      function getYear(item) {
+        return (item.release_date || item.first_air_date || "").slice(0, 4) || "—";
+      }
+      function getTitle(item) { return item.title || item.name || item.original_title || item.original_name || "Sem título"; }
+      function mediaType(item) { return item.media_type || (item.first_air_date ? "tv" : "movie"); }
+      function escapeHtml(s) { return String(s).replace(/[&<>'"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;" })[c]); }
+
+      // ===== MOVIE STRIP =====
+      async function loadTrending() {
+        const strip = $("movieStrip");
+        try {
+          const data = await api("/trending/all/week");
+          const items = (data.results || []).filter(x => x.poster_path && ["movie", "tv"].includes(mediaType(x))).slice(0, 20);
+          renderStrip(items);
+        } catch (e) {
+          strip.innerHTML = `<div class="empty-state">❌ ${e.message}</div>`;
+        }
+      }
+
+      async function searchTitles() {
+        const query = $("mainSearch").value.trim();
+        if (!query) return loadTrending();
+        const btn = $("searchBtn");
+        btn.disabled = true;
+        btn.textContent = "⏳ Buscando...";
+        try {
+          const data = await api("/search/multi", { query, include_adult: "false" });
+          const results = (data.results || []).filter(x => x.poster_path && ["movie", "tv"].includes(mediaType(x)));
+          $("stripTitle").textContent = `🎯 Resultados para “${query}”`;
+          renderStrip(results.slice(0, 24));
+          if (!results.length) notify("Nenhum resultado encontrado.", "error");
+        } catch (e) {
+          notify(`Erro: ${e.message}`, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "🔍 Pesquisar";
+        }
+      }
+
+      function renderStrip(items) {
+        const strip = $("movieStrip");
+        if (!items.length) {
+          strip.innerHTML = '<div class="empty-state">Nenhum resultado encontrado.</div>';
+          return;
+        }
+        strip.innerHTML = items.map((item, i) => `
+          <button class="movie-card" data-index="${i}">
+            <img src="${TMDB_POSTER + item.poster_path}" alt="${escapeHtml(getTitle(item))}" loading="lazy">
+            <div><strong>${escapeHtml(getTitle(item))}</strong><small>${getYear(item)} · ${mediaType(item) === "tv" ? "Série" : "Filme"}</small></div>
+          </button>
+        `).join("");
+        strip.querySelectorAll(".movie-card").forEach(btn => {
+          btn.addEventListener("click", () => selectTitle(items[Number(btn.dataset.index)]));
+        });
+      }
+
+      // ===== SELECT TITLE =====
+      async function selectTitle(item) {
+        state.item = item;
+        const type = mediaType(item);
+        document.body.classList.add("loading");
+        try {
+          const [details, images] = await Promise.all([
+            api(`/${type}/${item.id}`, { append_to_response: "credits" }),
+            api(`/${type}/${item.id}/images`, { include_image_language: "pt,en,null", language: "" })
+          ]);
+          state.details = details;
+          state.poster = details.poster_path ? TMDB_IMAGE + details.poster_path : "";
+          const backdrops = (images.backdrops || []).filter(x => x.file_path).slice(0, 12);
+          state.images = backdrops.length ? backdrops : (details.backdrop_path ? [{ file_path: details.backdrop_path }] : []);
+          state.selectedImage = state.images[0]?.file_path ? TMDB_IMAGE + state.images[0].file_path : state.poster;
+          fillFromTitle();
+          renderImagePicker();
+          applyState();
+          $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+          notify(`✅ ${getTitle(details)} carregado!`, "success");
+        } catch (e) {
+          notify(`❌ ${e.message}`, "error");
+        } finally {
+          document.body.classList.remove("loading");
+        }
+      }
+
+      function fillFromTitle() {
+        const d = state.details;
+        const title = getTitle(d);
+        const overview = d.overview || "Já disponível para assistir.";
+        $("titleInput").value = title;
+        $("subtitleInput").value = overview.length > 105 ? overview.slice(0, 102).trim() + "..." : overview;
+        $("kickerInput").value = mediaType(state.item) === "tv" ? "SÉRIE EM DESTAQUE" : "NOVO NO CATÁLOGO";
+        updateText();
+      }
+
+      // ===== IMAGE PICKER =====
+      function renderImagePicker() {
+        const picker = $("imagePicker");
+        if (!state.images.length) {
+          picker.innerHTML = '<div class="empty-state">Nenhuma imagem horizontal encontrada.</div>';
+          return;
+        }
+        picker.innerHTML = state.images.map((img, idx) => {
+          const src = TMDB_IMAGE + img.file_path;
+          return `<button class="image-option ${idx === 0 ? "active" : ""}" data-src="${src}"><img src="https://image.tmdb.org/t/p/w300${img.file_path}" alt="Opção ${idx+1}" loading="lazy"></button>`;
+        }).join("");
+        picker.querySelectorAll(".image-option").forEach(btn => {
+          btn.addEventListener("click", () => {
+            picker.querySelectorAll(".image-option").forEach(x => x.classList.remove("active"));
+            btn.classList.add("active");
+            state.selectedImage = btn.dataset.src;
+            $("bannerBg").src = state.selectedImage;
+            updateTemplateThumbs();
+          });
+        });
+      }
+
+      // ===== UPDATE TEMPLATE THUMBS =====
+      function updateTemplateThumbs() {
+        const img = state.selectedImage || state.poster || "";
+        document.querySelectorAll(".template-thumb").forEach(thumb => {
+          if (img) thumb.style.backgroundImage = `url("${img}")`;
+        });
+      }
+
+      // ===== UPDATE TEXT =====
+      function updateText() {
+        $("bannerKicker").textContent = $("kickerInput").value.trim() || "DESTAQUE";
+        $("bannerTitle").textContent = $("titleInput").value.trim() || "Sem título";
+        $("bannerSubtitle").textContent = $("subtitleInput").value.trim() || "";
+        if (state.details) {
+          const genres = (state.details.genres || []).slice(0, 2).map(g => g.name).join(" · ") || (mediaType(state.item) === "tv" ? "Série" : "Filme");
+          $("bannerMeta").innerHTML = `<span>${getYear(state.details)}</span><span>${escapeHtml(genres)}</span>`;
+        }
+      }
+
+      // ===== APPLY STATE =====
+      function applyState() {
+        banner.dataset.template = state.template;
+        banner.className = `format-${state.format}`;
+        banner.style.setProperty("--accent", state.accent);
+        $("bannerBg").src = state.selectedImage || state.poster || "";
+        $("bannerPoster").src = state.poster || state.selectedImage || "";
+        $("brandLogo").src = state.logo;
+        $("brandLogo").style.display = $("logoToggle").checked ? "block" : "none";
+        $("bannerMeta").style.display = $("metaToggle").checked ? "flex" : "none";
+        $("bannerBg").style.transform = `scale(${state.zoom / 100})`;
+        $("bannerBg").style.objectPosition = state.position;
+        $("bannerShade").style.opacity = state.shade / 100;
+        updateTemplateThumbs();
+        updateText();
+        requestAnimationFrame(scalePreview);
+      }
+
+      // ===== SCALE PREVIEW =====
+      function scalePreview() {
+        const shell = $("stageShell");
+        const wrap = $("banner-scale-wrap");
+        const availW = Math.max(shell.clientWidth - 32, 260);
+        const availH = Math.max(Math.min(window.innerHeight * .72, 780), 380);
+        const scale = Math.min(availW / banner.offsetWidth, availH / banner.offsetHeight, 1);
+        wrap.style.width = `${banner.offsetWidth * scale}px`;
+        wrap.style.height = `${banner.offsetHeight * scale}px`;
+        banner.style.transform = `scale(${scale})`;
+        banner.style.transformOrigin = "top left";
+      }
+
+      // ===== FORMAT =====
+      function setFormat(format) {
+        state.format = format;
+        document.querySelectorAll("[data-format]").forEach(btn => btn.classList.toggle("active", btn.dataset.format === format));
+        const sizes = { square: "1080 × 1080", story: "1080 × 1920", landscape: "1920 × 1080" };
+        $("formatSize").textContent = sizes[format];
+        applyState();
+      }
+
+      // ===== TEMPLATE =====
+      function setTemplate(template) {
+        state.template = template;
+        localStorage.setItem("geradorMaxLastTemplate", template);
+        document.querySelectorAll("[data-template]").forEach(btn => btn.classList.toggle("active", btn.dataset.template === template));
+        applyState();
+      }
+
+      // ===== EXPORT =====
+      async function renderBannerBlob() {
+        const origTransform = banner.style.transform;
+        const wrap = $("banner-scale-wrap");
+        const origW = wrap.style.width;
+        const origH = wrap.style.height;
+        banner.style.transform = "none";
+        wrap.style.width = `${banner.offsetWidth}px`;
+        wrap.style.height = `${banner.offsetHeight}px`;
+        try {
+          await document.fonts.ready;
+          await waitForImages(banner);
+          const canvas = await html2canvas(banner, {
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#10151b",
+            scale: 1,
+            logging: false,
+            width: banner.offsetWidth,
+            height: banner.offsetHeight
+          });
+          return await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Falha ao gerar imagem")), "image/png", 1));
+        } finally {
+          banner.style.transform = origTransform;
+          wrap.style.width = origW;
+          wrap.style.height = origH;
+          scalePreview();
+        }
+      }
+
+      function exportFilename() {
+        const clean = ($("titleInput").value || "banner").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+        return `${clean}-${state.template}-${state.format}.png`;
+      }
+
+      async function shareBanner() {
+        const btns = [$("exportBtn"), $("headerExportBtn")];
+        btns.forEach(b => { b.disabled = true; b.textContent = "⏳ Gerando..."; });
+        try {
+          const blob = await renderBannerBlob();
+          const file = new File([blob], exportFilename(), { type: "image/png" });
+          if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+            await navigator.share({ files: [file], title: "Gerador Max", text: "Criado no Gerador Max" });
+            notify("✅ Imagem compartilhada!", "success");
+          } else {
+            downloadBlob(blob);
+            notify("📥 PNG baixado. Compartilhe pelo app de fotos.", "success");
+          }
+        } catch (e) {
+          if (e?.name !== "AbortError") {
+            notify("❌ " + e.message, "error");
+          }
+        } finally {
+          btns.forEach((b, i) => { b.disabled = false; b.textContent = i === 0 ? "📤 Compartilhar" : "📤 Compartilhar"; });
+        }
+      }
+
+      async function downloadBanner() {
+        const btn = $("downloadBtn");
+        btn.disabled = true;
+        btn.textContent = "⏳ Gerando...";
+        try {
+          const blob = await renderBannerBlob();
+          downloadBlob(blob);
+          notify("✅ PNG gerado!", "success");
+        } catch (e) {
+          notify("❌ " + e.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "⬇️ PNG";
+        }
+      }
+
+      function downloadBlob(blob) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = exportFilename();
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+
+      function waitForImages(root) {
+        const imgs = [...root.querySelectorAll("img")].filter(img => img.src);
+        return Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          setTimeout(resolve, 5000);
+        })));
+      }
+
+      // ===== SAVE / RESET =====
+      function saveProject() {
+        const project = {
+          ...state,
+          kicker: $("kickerInput").value,
+          title: $("titleInput").value,
+          subtitle: $("subtitleInput").value,
+          showLogo: $("logoToggle").checked,
+          showMeta: $("metaToggle").checked
+        };
+        localStorage.setItem("geradorMaxProject", JSON.stringify(project));
+        notify("💾 Projeto salvo!", "success");
+      }
+
+      function restoreProject() {
+        const saved = localStorage.getItem("geradorMaxProject");
+        if (!saved) return;
+        try {
+          const p = JSON.parse(saved);
+          Object.assign(state, p);
+          $("kickerInput").value = p.kicker || "NOVO NO CATÁLOGO";
+          $("titleInput").value = p.title || "Escolha um filme";
+          $("subtitleInput").value = p.subtitle || "";
+          $("logoToggle").checked = p.showLogo !== false;
+          $("metaToggle").checked = p.showMeta !== false;
+          $("accentInput").value = p.accent || "#ff6b00";
+          $("zoomRange").value = p.zoom || 100;
+          $("shadeRange").value = p.shade || 100;
+          $("positionSelect").value = p.position || "center";
+          $("zoomValue").textContent = `${p.zoom || 100}%`;
+          $("shadeValue").textContent = `${p.shade || 100}%`;
+          setFormat(p.format || "square");
+          setTemplate(p.template || "editorial");
+          renderImagePicker();
+          applyState();
+        } catch (e) { console.warn("Restore error", e); }
+      }
+
+      function resetProject() {
+        if (confirm("🔄 Tem certeza? Isso apagará o projeto atual.")) {
+          localStorage.removeItem("geradorMaxProject");
+          location.reload();
+        }
+      }
+
+      // ===== LOGO UPLOAD =====
+      function handleLogoUpload(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) return notify("Escolha uma imagem.", "error");
+        const reader = new FileReader();
+        reader.onload = () => {
+          state.logo = reader.result;
+          localStorage.setItem("geradorMaxLogo", state.logo);
+          $("brandLogo").src = state.logo;
+          $("logoToggle").checked = true;
+          notify("✅ Logomarca atualizada!", "success");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // ===== CLICK TO ZOOM PREVIEW =====
+      function toggleZoom() {
+        const wrap = $("banner-scale-wrap");
+        const currentScale = banner.style.transform;
+        if (currentScale && currentScale !== "scale(1)") {
+          banner.style.transform = "scale(1)";
+          banner.style.transformOrigin = "top left";
+          wrap.style.width = `${banner.offsetWidth}px`;
+          wrap.style.height = `${banner.offsetHeight}px`;
+        } else {
+          scalePreview();
+        }
+      }
+
+      // ===== EVENTS =====
+      $("searchBtn").addEventListener("click", searchTitles);
+      $("mainSearch").addEventListener("keydown", e => { if (e.key === "Enter") searchTitles(); });
+      $("formatControls").addEventListener("click", e => { const btn = e.target.closest("[data-format]"); if (btn) setFormat(btn.dataset.format); });
+      $("templateGrid").addEventListener("click", e => { const btn = e.target.closest("[data-template]"); if (btn) setTemplate(btn.dataset.template); });
+      ["kickerInput", "titleInput", "subtitleInput"].forEach(id => $(id).addEventListener("input", updateText));
+      $("accentInput").addEventListener("input", e => { state.accent = e.target.value; applyState(); });
+      $("positionSelect").addEventListener("change", e => { state.position = e.target.value; applyState(); });
+      $("zoomRange").addEventListener("input", e => { state.zoom = Number(e.target.value); $("zoomValue").textContent = `${state.zoom}%`; applyState(); });
+      $("shadeRange").addEventListener("input", e => { state.shade = Number(e.target.value); $("shadeValue").textContent = `${state.shade}%`; applyState(); });
+      $("logoToggle").addEventListener("change", applyState);
+      $("metaToggle").addEventListener("change", applyState);
+      $("logoUpload").addEventListener("change", handleLogoUpload);
+      $("exportBtn").addEventListener("click", shareBanner);
+      $("headerExportBtn").addEventListener("click", shareBanner);
+      $("downloadBtn").addEventListener("click", downloadBanner);
+      $("saveProjectBtn").addEventListener("click", saveProject);
+      $("resetBtn").addEventListener("click", resetProject);
+      $("stageShell").addEventListener("dblclick", toggleZoom);
+      window.addEventListener("resize", scalePreview);
+
+      // ===== INIT =====
+      $("brandLogo").src = state.logo;
+      restoreProject();
+      applyState();
+      loadTrending();
+
+      // Re-scale after fonts load
+      document.fonts.ready.then(scalePreview);
+      setTimeout(scalePreview, 300);
+
+      console.log("🎬 Gerador Max v2.0 — 8 templates, previews, zoom e muito mais!");
+    })();
+  </script>
+</body>
+</html>
