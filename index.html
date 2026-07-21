@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff6b00">
+  <title>Gerador Max — Banners profissionais</title>
+  <meta name="description" content="Crie banners profissionais de filmes e séries com imagens oficiais do TMDB.">
+  <link rel="icon" href="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ===== VARIÁVEIS E RESET ===== */
+    :root {
+      --orange: #ff6b00;
+      --orange-2: #ff8a33;
+      --orange-glow: rgba(255,107,0,0.3);
+      --dark-blue: #011624;
+      --page: #070c13;
+      --panel: #0d1520;
+      --panel-2: #121d2a;
+      --line: rgba(255,255,255,.09);
+      --muted: #93a0b2;
+      --text: #f8fafc;
+      --success: #2bd576;
+      --danger: #ff5a67;
+      --radius: 18px;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glow: 0 0 40px rgba(255,107,0,0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--page);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ===== ANIMAÇÃO DE FUNDO ===== */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .bg-glow .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: floatOrb 20s ease-in-out infinite alternate;
+    }
+    
+    .bg-glow .orb:nth-child(1) {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #ff6b00, transparent 70%);
+      top: -10%;
+      right: -10%;
+      animation-delay: 0s;
+    }
+    
+    .bg-glow .orb:nth-child(2) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #0066ff, transparent 70%);
+      bottom: -10%;
+      left: -10%;
+      animation-delay: -7s;
+      opacity: 0.15;
+    }
+    
+    .bg-glow .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #ff0080, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -14s;
+      opacity: 0.08;
+    }
+    
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(10px, -10px) scale(1.05); }
+    }
+
+    /* ===== PARTICULAS DE LUZ ===== */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      animation: particleFloat 15s linear infinite;
+    }
+    
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ===== HEADER COM EFEITO ===== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 4vw, 42px);
+      background: rgba(7,12,19,.88);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px) saturate(1.2);
+      box-shadow: 0 4px 30px rgba(0,0,0,.3);
+    }
+    
+    .app-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0.3;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 25px rgba(255,107,0,.28);
+      overflow: hidden;
+      transition: var(--transition);
+      animation: pulseLogo 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulseLogo {
+      0%, 100% { box-shadow: 0 8px 25px rgba(255,107,0,.28); }
+      50% { box-shadow: 0 8px 40px rgba(255,107,0,.5); }
+    }
+    
+    .brand-mark img { width: 38px; height: 38px; object-fit: contain; }
+    .brand-copy strong { display: block; font-size: 18px; line-height: 1; background: linear-gradient(135deg, #fff, #e0e0e0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-copy span { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* ===== HERO COM EFEITO DE LUZ ===== */
+    .hero {
+      width: min(1440px, calc(100% - 32px));
+      margin: 34px auto 22px;
+      padding: clamp(24px, 4vw, 48px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(1,22,36,.95), rgba(12,19,29,.92));
+      box-shadow: var(--shadow), var(--glow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(255,107,0,.08), transparent 60%);
+      pointer-events: none;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      right: -180px;
+      top: -210px;
+      background: radial-gradient(circle, rgba(255,107,0,.34), transparent 68%);
+      pointer-events: none;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes glowPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .hero .glow-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0.4;
+    }
+
+    .eyebrow {
+      color: var(--orange);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      position: relative;
+      display: inline-block;
+      padding-left: 16px;
+    }
+    
+    .eyebrow::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      background: var(--orange);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255,107,0,.6);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+      50% { opacity: 0.5; transform: translateY(-50%) scale(1.5); }
+    }
+
+    .hero h1 {
+      margin: 8px 0 10px;
+      max-width: 790px;
+      font-size: clamp(30px, 4.5vw, 64px);
+      line-height: 1.03;
+      letter-spacing: -.04em;
+      background: linear-gradient(135deg, #fff 60%, var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .hero p {
+      margin: 0;
+      max-width: 670px;
+      color: #aeb8c5;
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.6;
+    }
+
+    /* ===== SEARCH BOX COM EFEITO ===== */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 26px;
+      max-width: 760px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: #fff;
+      outline: none;
+      transition: var(--transition);
+    }
+    
+    .search-box input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(255,107,0,.15), 0 0 40px rgba(255,107,0,.05);
+      background: rgba(255,255,255,.1);
+    }
+    
+    .search-box input::placeholder {
+      color: rgba(255,255,255,.3);
+    }
+    
+    .search-box button {
+      min-width: 128px;
+      height: 54px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .search-box button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,.15) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    
+    .search-box button:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .search-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,107,0,.35);
+    }
+    
+    .search-box button:active {
+      transform: scale(0.97);
+    }
+
+    /* ===== MOVIE STRIP ===== */
+    .movie-strip-wrap {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto 24px;
+    }
+    
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .section-head h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .section-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .movie-strip {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 145px;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--orange) transparent;
+    }
+    
+    .movie-strip::-webkit-scrollbar {
+      height: 4px;
+    }
+    .movie-strip::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.05);
+      border-radius: 2px;
+    }
+    .movie-strip::-webkit-scrollbar-thumb {
+      background: var(--orange);
+      border-radius: 2px;
+    }
+
+    .movie-card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      overflow: hidden;
+      background: var(--panel);
+      color: #fff;
+      text-align: left;
+      padding: 0;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .movie-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 15px;
+      background: linear-gradient(135deg, transparent 60%, rgba(255,107,0,.05));
+      pointer-events: none;
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .movie-card:hover::after {
+      opacity: 1;
+    }
+    
+    .movie-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(255,107,0,.65);
+      box-shadow: 0 12px 40px rgba(0,0,0,.4), 0 0 40px rgba(255,107,0,.05);
+    }
+    
+    .movie-card:active {
+      transform: scale(0.97);
+    }
+    
+    .movie-card img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+      background: #17212d;
+    }
+    
+    .movie-card div {
+      padding: 9px 10px 11px;
+    }
+    .movie-card strong {
+      display: block;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .movie-card small {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* ===== WORKSPACE ===== */
+    .workspace {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: minmax(310px, 380px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ===== EDITOR PANEL ===== */
+    .editor-panel, .preview-panel {
+      border: 1px solid var(--line);
+      background: rgba(13,21,32,.92);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), var(--glow);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .editor-panel::before, .preview-panel::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0.3;
+    }
+    
+    .editor-panel { padding: 18px; position: sticky; top: 88px; max-height: calc(100vh - 106px); overflow-y: auto; }
+    .editor-panel::-webkit-scrollbar { width: 4px; }
+    .editor-panel::-webkit-scrollbar-track { background: transparent; }
+    .editor-panel::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+    
+    .preview-panel { min-height: 780px; padding: 18px; }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .panel-title h2 { margin: 0; font-size: 18px; }
+    .step-pill {
+      color: var(--orange);
+      background: rgba(255,107,0,.12);
+      border: 1px solid rgba(255,107,0,.22);
+      border-radius: 999px;
+      font-size: 10px;
+      padding: 5px 9px;
+      font-weight: 600;
+      letter-spacing: .05em;
+    }
+
+    /* ===== CONTROLES COM EFEITO ===== */
+    .control-group {
+      padding: 15px 0;
+      border-top: 1px solid var(--line);
+    }
+    .control-group:first-of-type { border-top: 0; padding-top: 0; }
+    .control-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.7);
+    }
+    .control-label small {
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 11px;
+    }
+
+    .input, .textarea, .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(10,17,27,.8);
+      color: #fff;
+      border-radius: 11px;
+      padding: 11px 12px;
+      outline: none;
+      transition: var(--transition);
+    }
+    
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255,107,0,.1);
+    }
+    
+    .textarea { min-height: 74px; resize: vertical; }
+
+    /* ===== SEGMENTED BUTTONS ===== */
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+    
+    .segment-btn {
+      border: 1px solid var(--line);
+      color: #cbd5e1;
+      background: rgba(255,255,255,.04);
+      border-radius: 10px;
+      padding: 9px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .segment-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .segment-btn.active {
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      color: #fff;
+      border-color: var(--orange);
+      box-shadow: 0 4px 20px rgba(255,107,0,.25);
+    }
+    
+    .segment-btn:not(.active):hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.2);
+    }
+
+    /* ===== TEMPLATE GRID ===== */
+    .real-template-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .real-template-btn {
+      padding: 8px;
+      border-radius: 16px;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      text-align: left;
+      overflow: hidden;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .real-template-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255,107,0,.05), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .real-template-btn:hover::after {
+      opacity: 1;
+    }
+    
+    .real-template-btn:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,107,0,.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
+    }
+    
+    .real-template-btn.active {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255,107,0,.12), 0 8px 30px rgba(255,107,0,.1);
+    }
+    
+    .real-template-preview {
+      position: relative;
+      aspect-ratio: 1/1;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #17212d center/cover no-repeat;
+      isolation: isolate;
+    }
+    
+    .real-template-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    
+    .real-template-preview::after {
+      content: attr(data-title);
+      position: absolute;
+      z-index: 3;
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      text-transform: uppercase;
+      text-shadow: 0 3px 12px rgba(0,0,0,.5);
+      line-height: .9;
+    }
+
+    /* ===== STAGE SHELL ===== */
+    .stage-shell {
+      min-height: 700px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,107,0,.03), transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(0,100,255,.03), transparent 50%),
+        #0c131d;
+      position: relative;
+      overflow: auto;
+      transition: background 0.5s;
+    }
+    
+    .stage-shell::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(45deg, rgba(255,255,255,.01) 1px, transparent 1px),
+        linear-gradient(-45deg, rgba(255,255,255,.01) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    /* ===== BANNER ===== */
+    #banner {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: #10151b;
+      box-shadow: 
+        0 20px 70px rgba(0,0,0,.5),
+        0 0 60px rgba(255,107,0,.03);
+      color: #fff;
+      isolation: isolate;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    
+    #banner.format-story { width: 1080px; height: 1920px; }
+    #banner.format-landscape { width: 1920px; height: 1080px; }
+
+    /* ===== RESULT MODAL ===== */
+    .result-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      background: rgba(2,7,12,.96);
+      backdrop-filter: blur(24px) saturate(1.2);
+      overflow-y: auto;
+      padding: 18px 14px 30px;
+      animation: fadeInModal 0.4s ease;
+    }
+    
+    .result-modal.show { display: block; }
+    
+    @keyframes fadeInModal {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .result-card { width: min(100%, 620px); margin: 0 auto; }
+    .result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .result-head h2 { font-size: 18px; margin: 0; }
+    
+    .result-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--line);
+      color: #fff;
+      font-size: 20px;
+      transition: var(--transition);
+    }
+    .result-close:hover { background: rgba(255,255,255,.15); }
+    
+    .result-image-wrap {
+      background: #000;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .result-image-wrap img { width: 100%; height: auto; display: block; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 100;
+      max-width: 340px;
+      padding: 13px 16px;
+      color: #fff;
+      background: #152130;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--orange);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: .25s ease;
+      font-size: 13px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 1fr; }
+      .editor-panel { position: static; max-height: none; }
+      .preview-panel { min-height: auto; }
+      .stage-shell { min-height: 480px; }
+    }
+
+    @media (max-width: 640px) {
+      .app-header { height: 64px; padding: 0 14px; }
+      .brand-copy span { display: none; }
+      .brand-copy strong { font-size: 15px; }
+      .brand-mark { width: 38px; height: 38px; }
+      .hero, .workspace, .movie-strip-wrap { width: min(100% - 20px, 1440px); }
+      .hero { margin-top: 18px; border-radius: 20px; padding: 22px 18px; }
+      .search-box { flex-direction: column; }
+      .search-box button { height: 48px; min-width: 100%; }
+      .workspace { margin-bottom: 24px; }
+      .preview-panel, .editor-panel { border-radius: 14px; padding: 12px; }
+      .stage-shell { min-height: 360px; padding: 10px; }
+      .real-template-grid { gap: 9px; }
+      .real-template-btn { padding: 6px; }
+    }
+
+    /* ===== LOADING ===== */
+    .loading { opacity: .55; pointer-events: none; }
+    .empty-state { color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; padding: 18px; font-size: 12px; text-align: center; }
+
+    .export-host {
+      position: fixed !important;
+      left: -12000px !important;
+      top: 0 !important;
+      z-index: -9999 !important;
+      opacity: 1 !important;
+      pointer-events: none !important;
+      overflow: visible !important;
+      background: #10151b !important;
+    }
+
+    /* ===== SCROLLBAR GLOBAL ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--orange-2); }
+
+    /* ===== ANIMAÇÃO DE ENTRADA ===== */
+    .fade-in {
+      animation: fadeIn 0.6s ease both;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in-delay-1 { animation-delay: 0.1s; }
+    .fade-in-delay-2 { animation-delay: 0.2s; }
+    .fade-in-delay-3 { animation-delay: 0.3s; }
+    .fade-in-delay-4 { animation-delay: 0.4s; }
+
+    /* ===== BOTÕES DE AÇÃO ===== */
+    .ghost-btn, .primary-btn, .icon-btn {
+      border: 0;
+      border-radius: 12px;
+      min-height: 42px;
+      padding: 0 16px;
+      color: #fff;
+      transition: var(--transition);
+      font-weight: 600;
+      font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ghost-btn {
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+    }
+    .ghost-btn:hover {
+      background: rgba(255,255,255,.12);
+      transform: translateY(-1px);
+    }
+    
+    .primary-btn {
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(255,107,0,.22);
+    }
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255,107,0,.35);
+    }
+    .primary-btn:active { transform: scale(0.97); }
+    .primary-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    
+    .icon-btn {
+      width: 42px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+    }
+    
+    .icon-btn:hover { background: rgba(255,255,255,.12); }
+
+    /* ===== FLUXO DE TELAS ===== */
+    .flow-screen {
+      width: min(100% - 20px, 760px);
+      margin: 18px auto 34px;
+    }
+    .is-hidden { display: none !important; }
+
+    .flow-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .flow-back {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+      flex: 0 0 auto;
+      color: #fff;
+      font-size: 20px;
+      transition: var(--transition);
+    }
+    .flow-back:hover { background: rgba(255,255,255,.12); transform: translateX(-2px); }
+    .flow-head h1 { font-size: 22px; margin: 0; line-height: 1.1; }
+    .flow-head p { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+
+    .selected-title-card {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .selected-title-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255,107,0,.1), transparent);
+      pointer-events: none;
+    }
+    .selected-title-card img {
+      width: 68px;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #17212d;
+    }
+    .selected-title-card strong { display: block; font-size: 15px; }
+    .selected-title-card small { color: var(--muted); font-size: 11px; }
+
+    .chosen-template {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255,255,255,.035);
+    }
+    .chosen-template strong { font-size: 13px; }
+    .chosen-template button {
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .chosen-template button:hover { color: var(--orange-2); }
+
+    /* ===== RANGE SLIDER ESTILIZADO ===== */
+    .range {
+      width: 100%;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--line);
+      border-radius: 2px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255,107,0,.3);
+      transition: var(--transition);
+    }
+    .range::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255,107,0,.5);
+    }
+    .range::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ===== SWITCH ESTILIZADO ===== */
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .switch {
+      position: relative;
+      width: 42px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #303b49;
+      border-radius: 999px;
+      transition: var(--transition);
+    }
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    }
+    .switch input:checked + .slider {
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow: 0 0 20px rgba(255,107,0,.2);
+    }
+    .switch input:checked + .slider::before { transform: translateX(18px); }
+
+    /* ===== UPLOAD BUTTON ===== */
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 42px;
+      border: 1px dashed rgba(255,255,255,.2);
+      color: #cbd5e1;
+      background: rgba(255,255,255,.035);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .upload-btn:hover {
+      border-color: var(--orange);
+      color: #fff;
+      background: rgba(255,107,0,.05);
+    }
+
+    /* ===== IMAGE PICKER ===== */
+    .image-picker-block + .image-picker-block { margin-top: 14px; }
+    .picker-title { font-size: 11px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+    .image-picker {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 88px;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+    .image-option {
+      width: 88px;
+      height: 56px;
+      padding: 0;
+      border-radius: 9px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      background: #111b27;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .image-option.active {
+      border-color: var(--orange);
+      box-shadow: 0 0 20px rgba(255,107,0,.2);
+    }
+    .image-option:hover { border-color: rgba(255,107,0,.4); }
+    .image-option img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ===== RESPONSIVO WORKSPACE ===== */
+    @media (max-width: 900px) {
+      .hero, .workspace, .movie-strip-wrap { width: min(100% - 20px, 900px); }
+    }
+    @media (max-width: 640px) {
+      .preview-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .preview-actions button { width: 100%; }
+      .preview-actions .primary-btn { grid-column: 1 / -1; }
+      .row { grid-template-columns: 1fr; }
+      .result-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fundo com efeitos de luz -->
+  <div class="bg-glow">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <!-- Partículas -->
+  <div class="particles" id="particles"></div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark"><img src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" alt="MaxPlay"></div>
+      <div class="brand-copy"><strong>Gerador Max</strong><span>Design para entretenimento</span></div>
+    </div>
+  </header>
+
+  <!-- CATÁLOGO -->
+  <div id="catalogScreen">
+    <section class="hero">
+      <span class="eyebrow">Ferramenta oficial MaxPlay</span>
+      <h1>Banners profissionais, sem aparência de IA.</h1>
+      <p>Escolha um filme ou série, selecione uma imagem oficial e aplique um template gráfico limpo. O layout permanece consistente; você controla o conteúdo.</p>
+      <div class="search-box">
+        <input id="mainSearch" type="search" placeholder="Pesquise por filme ou série..." autocomplete="off">
+        <button class="primary-btn" id="searchBtn">Pesquisar</button>
+      </div>
+      <div class="glow-line"></div>
+    </section>
+
+    <section class="movie-strip-wrap catalog-section search-results" id="searchResultsSection">
+      <div class="section-head"><div><span class="eyebrow">Resultados</span><h2 id="stripTitle">Pesquisa</h2></div><span>Toque para editar</span></div>
+      <div class="movie-strip" id="movieStrip"></div>
+    </section>
+
+    <section class="movie-strip-wrap catalog-section">
+      <div class="section-head"><div><span class="eyebrow">Filmes</span><h2>Em alta agora</h2></div><span>Mais procurados</span></div>
+      <div class="movie-strip" id="moviesTrending"><div class="empty-state">Carregando...</div></div>
+    </section>
+
+    <section class="movie-strip-wrap catalog-section">
+      <div class="section-head"><div><span class="eyebrow">Séries</span><h2>Séries em alta</h2></div><span>Para maratonar</span></div>
+      <div class="movie-strip" id="seriesTrending"><div class="empty-state">Carregando...</div></div>
+    </section>
+
+    <section class="movie-strip-wrap catalog-section">
+      <div class="section-head"><div><span class="eyebrow">Lançamentos</span><h2>Nos cinemas</h2></div><span>Novidades</span></div>
+      <div class="movie-strip" id="newReleases"><div class="empty-state">Carregando...</div></div>
+    </section>
+  </div>
+
+  <!-- TELA DE TEMPLATES -->
+  <section class="flow-screen is-hidden" id="templateScreen">
+    <div class="flow-head">
+      <button class="flow-back" id="backCatalogBtn">←</button>
+      <div>
+        <h1>Escolha o visual</h1>
+        <p>As miniaturas mostram como o banner ficará com o conteúdo selecionado.</p>
+      </div>
+    </div>
+    <div class="selected-title-card">
+      <img id="selectedTitlePoster" alt="">
+      <div>
+        <strong id="selectedTitleName">Conteúdo selecionado</strong>
+        <small id="selectedTitleMeta"></small>
+      </div>
+    </div>
+    <div class="real-template-grid" id="templateGrid">
+      <button class="real-template-btn" data-template="editorial">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Destaque</strong><small>Texto lateral e leitura rápida.</small></div>
+      </button>
+      <button class="real-template-btn" data-template="cinema">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Cinema</strong><small>Título central e imagem protagonista.</small></div>
+      </button>
+      <button class="real-template-btn" data-template="poster">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Pôster</strong><small>Capa vertical com informações ao lado.</small></div>
+      </button>
+      <button class="real-template-btn" data-template="release">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Estreia</strong><small>Faixa de cor e impacto de lançamento.</small></div>
+      </button>
+      <button class="real-template-btn" data-template="minimal">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Essencial</strong><small>Limpo, elegante e com poucos elementos.</small></div>
+      </button>
+      <button class="real-template-btn" data-template="recommendation">
+        <div class="real-template-preview" data-title="Título"></div>
+        <div class="real-template-info"><strong>Max Recomenda</strong><small>Modelo de indicação e curadoria.</small></div>
+      </button>
+    </div>
+  </section>
+
+  <!-- WORKSPACE -->
+  <main class="workspace is-hidden" id="workspace">
+    <aside class="editor-panel">
+      <div class="panel-title">
+        <h2>Editor</h2>
+        <span class="step-pill">Tudo em um único index</span>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>1. Formato</span><small id="formatSize">1080 × 1080</small></div>
+        <div class="segmented" id="formatControls">
+          <button class="segment-btn active" data-format="square">Feed</button>
+          <button class="segment-btn" data-format="story">Story</button>
+          <button class="segment-btn" data-format="landscape">Horizontal</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>2. Visual escolhido</span><small>Template</small></div>
+        <div class="chosen-template">
+          <strong id="chosenTemplateName">Max Destaque</strong>
+          <button id="changeTemplateBtn">Trocar</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>3. Imagem oficial</span><small>TMDB</small></div>
+        <div id="imagePicker"><div class="empty-state">Escolha um título acima.</div></div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>4. Textos</span><small>Personalização controlada</small></div>
+        <label class="control-label"><small>Selo</small></label>
+        <input class="input" id="kickerInput" value="NOVO NO CATÁLOGO" maxlength="32">
+        <label class="control-label" style="margin-top:10px"><small>Título</small></label>
+        <textarea class="textarea" id="titleInput" maxlength="70">Escolha um filme</textarea>
+        <label class="control-label" style="margin-top:10px"><small>Texto secundário</small></label>
+        <textarea class="textarea" id="subtitleInput" maxlength="110">Selecione um título acima para carregar as informações.</textarea>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>5. Aparência</span><small>Sem poluição</small></div>
+        <div class="row">
+          <div>
+            <label class="control-label"><small>Cor de destaque</small></label>
+            <input class="input" id="accentInput" type="color" value="#ff6b00" style="height:45px;padding:5px;cursor:pointer;">
+          </div>
+          <div>
+            <label class="control-label"><small>Enquadramento</small></label>
+            <select class="select" id="positionSelect">
+              <option value="center">Centro</option>
+              <option value="left">Esquerda</option>
+              <option value="right">Direita</option>
+              <option value="top">Topo</option>
+            </select>
+          </div>
+        </div>
+        <label class="control-label" style="margin-top:12px"><span>Zoom da imagem</span><small id="zoomValue">100%</small></label>
+        <input class="range" id="zoomRange" type="range" min="100" max="145" value="100">
+        <label class="control-label" style="margin-top:12px"><span>Escurecimento</span><small id="shadeValue">100%</small></label>
+        <input class="range" id="shadeRange" type="range" min="55" max="125" value="100">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><span>6. Marca</span><small>Salva no navegador</small></div>
+        <label class="upload-btn" for="logoUpload">📤 Enviar logomarca personalizada</label>
+        <input id="logoUpload" type="file" accept="image/*" hidden>
+        <div class="switch-row" style="margin-top:12px">
+          <span style="font-size:12px">Exibir logomarca</span>
+          <label class="switch"><input id="logoToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="switch-row" style="margin-top:12px">
+          <span style="font-size:12px">Exibir ano e gênero</span>
+          <label class="switch"><input id="metaToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="switch-row" style="margin-top:12px">
+          <span style="font-size:12px">Marca d'água repetida</span>
+          <label class="switch"><input id="watermarkToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <label class="control-label" style="margin-top:12px"><span>Transparência da marca d'água</span><small id="watermarkValue">7%</small></label>
+        <input class="range" id="watermarkRange" type="range" min="2" max="18" value="7">
+      </div>
+    </aside>
+
+    <section class="preview-panel">
+      <div class="preview-topbar" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="flow-back" id="backTemplatesBtn">←</button>
+          <div>
+            <span style="font-size:11px;color:var(--muted)"><span class="status-dot" style="display:inline-block;width:8px;height:8px;margin-right:6px;background:var(--success);border-radius:50%;box-shadow:0 0 0 5px rgba(43,213,118,.10);"></span>Prévia em tempo real</span>
+            <h2 style="font-size:18px;margin:0;">Seu banner</h2>
+          </div>
+        </div>
+        <div class="preview-actions" style="display:flex;gap:8px;">
+          <button class="ghost-btn" id="saveProjectBtn">💾 Salvar projeto</button>
+          <button class="ghost-btn" id="downloadBtn">⬇️ Baixar PNG</button>
+          <button class="primary-btn" id="exportBtn">📤 Compartilhar</button>
+        </div>
+      </div>
+
+      <div class="stage-shell" id="stageShell">
+        <div id="banner-scale-wrap">
+          <div id="banner" data-template="editorial" class="format-square">
+            <img class="banner-bg" id="bannerBg" alt="Imagem de fundo" crossorigin="anonymous">
+            <div class="banner-shade" id="bannerShade"></div>
+            <div class="watermark-layer" id="watermarkLayer"></div>
+            <img class="banner-poster" id="bannerPoster" alt="Pôster" crossorigin="anonymous">
+            <img class="brand-logo" id="brandLogo" alt="Logomarca" src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" crossorigin="anonymous">
+            <div class="banner-content">
+              <div class="banner-kicker" id="bannerKicker">NOVO NO CATÁLOGO</div>
+              <h2 class="banner-title" id="bannerTitle">Escolha um filme</h2>
+              <p class="banner-subtitle" id="bannerSubtitle">Selecione um título acima para carregar as informações.</p>
+              <div class="banner-meta" id="bannerMeta"><span>2026</span><span>Filmes e séries</span></div>
+            </div>
+            <div class="bottom-line"></div>
+            <div class="safe-border"></div>
+            <div class="banner-grain"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- RESULT MODAL -->
+  <div class="result-modal" id="resultModal" aria-hidden="true">
+    <div class="result-card">
+      <div class="result-head">
+        <h2>✨ Banner pronto</h2>
+        <button class="result-close" id="closeResultBtn">✕</button>
+      </div>
+      <div class="result-image-wrap">
+        <img id="resultImage" alt="Banner final pronto para salvar">
+      </div>
+      <p class="result-help" style="color:var(--muted);font-size:12px;text-align:center;margin:12px 8px 14px;line-height:1.5;">
+        📱 No celular, toque e segure a imagem acima para salvar em Fotos.
+        <br>Ou use os botões abaixo.
+      </p>
+      <div class="result-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button class="primary-btn" id="shareReadyBtn">📤 Compartilhar</button>
+        <button class="ghost-btn" id="downloadReadyBtn">⬇️ Baixar PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ===== CONFIGURAÇÕES =====
+    const TMDB_API_KEY = "54b9cff0f48a3f127fa5cd5906bbe251";
+    const TMDB_BASE = "https://api.themoviedb.org/3";
+    const TMDB_IMAGE = "https://image.tmdb.org/t/p/original";
+    const TMDB_POSTER = "https://image.tmdb.org/t/p/w500";
+    const DEFAULT_LOGO = "https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png";
+
+    // ===== PARTÍCULAS =====
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (10 + Math.random() * 20) + 's';
+        p.style.animationDelay = (Math.random() * 20) + 's';
+        p.style.width = (1 + Math.random() * 3) + 'px';
+        p.style.height = p.style.width;
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // ===== ESTADO =====
+    const state = {
+      format: "square",
+      template: "editorial",
+      item: null,
+      details: null,
+      images: [],
+      posters: [],
+      selectedImage: "",
+      poster: "",
+      logo: localStorage.getItem("geradorMaxLogo") || DEFAULT_LOGO,
+      accent: "#ff6b00",
+      zoom: 100,
+      shade: 100,
+      position: "center",
+      watermark: true,
+      watermarkOpacity: 7
+    };
+
+    const el = id => document.getElementById(id);
+    const banner = el("banner");
+    const toast = el("toast");
+
+    function notify(message, type = "normal") {
+      toast.textContent = message;
+      toast.style.borderLeftColor = type === "error" ? "var(--danger)" : "var(--orange)";
+      toast.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    function api(path, params = {}) {
+      const query = new URLSearchParams({ api_key: TMDB_API_KEY, language: "pt-BR", ...params });
+      return fetch(`${TMDB_BASE}${path}?${query}`).then(async response => {
+        if (!response.ok) throw new Error(`TMDB respondeu ${response.status}`);
+        return response.json();
+      });
+    }
+
+    function getYear(item) {
+      return (item.release_date || item.first_air_date || "").slice(0, 4) || "—";
+    }
+
+    function getTitle(item) { return item.title || item.name || item.original_title || item.original_name || "Sem título"; }
+    function mediaType(item) { return item.media_type || (item.first_air_date ? "tv" : "movie"); }
+
+    // ===== CATÁLOGO =====
+    async function loadCatalog() {
+      try {
+        const [movies, series, releases] = await Promise.all([
+          api("/trending/movie/week"),
+          api("/trending/tv/week"),
+          api("/movie/now_playing", { region: "BR" })
+        ]);
+        renderMovieStrip((movies.results || []).filter(x => x.poster_path).slice(0,18), "moviesTrending");
+        renderMovieStrip((series.results || []).filter(x => x.poster_path).slice(0,18), "seriesTrending");
+        renderMovieStrip((releases.results || []).filter(x => x.poster_path).slice(0,18), "newReleases");
+      } catch (error) {
+        ["moviesTrending","seriesTrending","newReleases"].forEach(id => el(id).innerHTML = `<div class="empty-state">Não foi possível carregar. ${error.message}</div>`);
+      }
+    }
+
+    async function searchTitles() {
+      const query = el("mainSearch").value.trim();
+      if (!query) return;
+      el("searchBtn").disabled = true;
+      el("searchBtn").textContent = "Buscando...";
+      try {
+        const data = await api("/search/multi", { query, include_adult: "false" });
+        const results = (data.results || []).filter(x => x.poster_path && ["movie", "tv"].includes(mediaType(x)));
+        el("stripTitle").textContent = `Resultados para “${query}”`;
+        el("searchResultsSection").classList.add("active");
+        renderMovieStrip(results.slice(0, 24), "movieStrip");
+        if (!results.length) notify("Nenhum filme ou série encontrado.", "error");
+      } catch (error) {
+        notify(`Erro na pesquisa: ${error.message}`, "error");
+      } finally {
+        el("searchBtn").disabled = false;
+        el("searchBtn").textContent = "Pesquisar";
+      }
+    }
+
+    function renderMovieStrip(items, targetId = "movieStrip") {
+      const strip = el(targetId);
+      if (!items.length) {
+        strip.innerHTML = '<div class="empty-state">Nenhum resultado encontrado.</div>';
+        return;
+      }
+      strip.innerHTML = items.map((item, index) => `
+        <button class="movie-card fade-in" data-index="${index}" style="animation-delay:${index * 0.03}s">
+          <img src="${TMDB_POSTER + item.poster_path}" alt="${escapeHtml(getTitle(item))}" loading="lazy">
+          <div><strong>${escapeHtml(getTitle(item))}</strong><small>${getYear(item)} · ${mediaType(item) === "tv" ? "Série" : "Filme"}</small></div>
+        </button>
+      `).join("");
+      strip.querySelectorAll(".movie-card").forEach(btn => btn.addEventListener("click", () => selectTitle(items[Number(btn.dataset.index)])));
+    }
+
+    // ===== SELEÇÃO DE TÍTULO =====
+    async function selectTitle(item) {
+      state.item = item;
+      const type = mediaType(item);
+      document.body.classList.add("loading");
+      try {
+        const [details, images] = await Promise.all([
+          api(`/${type}/${item.id}`, { append_to_response: "credits" }),
+          api(`/${type}/${item.id}/images`, { include_image_language: "pt,en,null", language: "" })
+        ]);
+        state.details = details;
+        state.poster = details.poster_path ? TMDB_IMAGE + details.poster_path : "";
+        const backdrops = (images.backdrops || []).filter(x => x.file_path).slice(0, 12);
+        state.images = backdrops.length ? backdrops : (details.backdrop_path ? [{ file_path: details.backdrop_path }] : []);
+        state.posters = (images.posters || []).filter(x => x.file_path).slice(0, 10);
+        state.selectedImage = state.images[0]?.file_path ? TMDB_IMAGE + state.images[0].file_path : state.poster;
+        fillFromTitle();
+        renderImagePicker();
+        applyState();
+        el("selectedTitlePoster").src = state.poster;
+        el("selectedTitleName").textContent = getTitle(details);
+        el("selectedTitleMeta").textContent = `${getYear(details)} · ${type === "tv" ? "Série" : "Filme"}`;
+        updateTemplatePreviews();
+        el("catalogScreen").classList.add("is-hidden");
+        el("workspace").classList.add("is-hidden");
+        el("templateScreen").classList.remove("is-hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        notify(`${getTitle(details)} carregado. Escolha um visual.`);
+      } catch (error) {
+        notify(`Não foi possível carregar o título: ${error.message}`, "error");
+      } finally {
+        document.body.classList.remove("loading");
+      }
+    }
+
+    function fillFromTitle() {
+      const d = state.details;
+      const title = getTitle(d);
+      const overview = d.overview || "Já disponível para assistir.";
+      el("titleInput").value = title;
+      el("subtitleInput").value = overview.length > 105 ? overview.slice(0, 102).trim() + "..." : overview;
+      el("kickerInput").value = mediaType(state.item) === "tv" ? "SÉRIE EM DESTAQUE" : "NOVO NO CATÁLOGO";
+      updateText();
+    }
+
+    function renderImagePicker() {
+      const picker = el("imagePicker");
+      const groups = [];
+      if (state.images.length) groups.push({ title: "Imagens horizontais", items: state.images, kind: "backdrop" });
+      if (state.posters.length) groups.push({ title: "Capas verticais", items: state.posters, kind: "poster" });
+      if (!groups.length) {
+        picker.innerHTML = '<div class="empty-state">Nenhuma imagem encontrada.</div>';
+        return;
+      }
+      picker.innerHTML = groups.map(group => `
+        <div class="image-picker-block">
+          <div class="picker-title">${group.title}</div>
+          <div class="image-picker">${group.items.map((img,index) => {
+            const src = TMDB_IMAGE + img.file_path;
+            return `<button class="image-option ${src === state.selectedImage ? "active" : ""}" data-src="${src}"><img src="https://image.tmdb.org/t/p/w300${img.file_path}" alt="${group.title} ${index+1}" loading="lazy"></button>`;
+          }).join("")}</div>
+        </div>`).join("");
+      picker.querySelectorAll(".image-option").forEach(btn => btn.addEventListener("click", () => {
+        picker.querySelectorAll(".image-option").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        state.selectedImage = btn.dataset.src;
+        el("bannerBg").src = state.selectedImage;
+        updateTemplatePreviews();
+      }));
+    }
+
+    function updateText() {
+      el("bannerKicker").textContent = el("kickerInput").value.trim() || "DESTAQUE";
+      el("bannerTitle").textContent = el("titleInput").value.trim() || "Sem título";
+      el("bannerSubtitle").textContent = el("subtitleInput").value.trim();
+      if (state.details) {
+        updateTemplatePreviews();
+        const genres = (state.details.genres || []).slice(0, 2).map(g => g.name).join(" · ") || (mediaType(state.item) === "tv" ? "Série" : "Filme");
+        el("bannerMeta").innerHTML = `<span>${getYear(state.details)}</span><span>${escapeHtml(genres)}</span>`;
+      }
+    }
+
+    function applyState() {
+      banner.dataset.template = state.template;
+      banner.className = `format-${state.format}`;
+      banner.style.setProperty("--accent", state.accent);
+      el("bannerBg").src = state.selectedImage || state.poster || "";
+      el("bannerPoster").src = state.poster || state.selectedImage || "";
+      el("brandLogo").src = state.logo;
+      el("brandLogo").style.display = el("logoToggle").checked ? "block" : "none";
+      el("bannerMeta").style.display = el("metaToggle").checked ? "flex" : "none";
+      el("bannerBg").style.transform = `scale(${state.zoom / 100})`;
+      el("bannerBg").style.objectPosition = state.position;
+      el("bannerShade").style.opacity = state.shade / 100;
+      const watermark = el("watermarkLayer");
+      watermark.style.display = el("watermarkToggle").checked ? "block" : "none";
+      watermark.style.opacity = state.watermarkOpacity / 100;
+      watermark.style.backgroundImage = `url("${state.logo}")`;
+      updateTemplatePreviews();
+      updateText();
+      requestAnimationFrame(scalePreview);
+    }
+
+    function updateTemplatePreviews() {
+      const image = state.selectedImage || state.poster || "";
+      document.querySelectorAll(".real-template-preview").forEach(thumb => {
+        thumb.style.backgroundImage = image ? `url("${image}")` : "none";
+      });
+    }
+
+    function scalePreview() {
+      const shell = el("stageShell");
+      const wrap = el("banner-scale-wrap");
+      const availableW = Math.max(shell.clientWidth - 32, 260);
+      const availableH = Math.max(Math.min(window.innerHeight * .72, 720), 380);
+      const scale = Math.min(availableW / banner.offsetWidth, availableH / banner.offsetHeight, 1);
+      wrap.style.width = `${banner.offsetWidth * scale}px`;
+      wrap.style.height = `${banner.offsetHeight * scale}px`;
+      banner.style.transform = `scale(${scale})`;
+      banner.style.transformOrigin = "top left";
+    }
+
+    function setFormat(format) {
+      state.format = format;
+      document.querySelectorAll("[data-format]").forEach(btn => btn.classList.toggle("active", btn.dataset.format === format));
+      const sizes = { square: "1080 × 1080", story: "1080 × 1920", landscape: "1920 × 1080" };
+      el("formatSize").textContent = sizes[format];
+      applyState();
+    }
+
+    function setTemplate(template) {
+      state.template = template;
+      localStorage.setItem("geradorMaxLastTemplate", template);
+      document.querySelectorAll("[data-template]").forEach(btn => btn.classList.toggle("active", btn.dataset.template === template));
+      const names = { editorial:"Max Destaque", cinema:"Max Cinema", poster:"Max Pôster", release:"Max Estreia", minimal:"Max Essencial", recommendation:"Max Recomenda" };
+      if (el("chosenTemplateName")) el("chosenTemplateName").textContent = names[template] || "Template Max";
+      applyState();
+    }
+
+    function chooseTemplate(template) {
+      setTemplate(template);
+      el("templateScreen").classList.add("is-hidden");
+      el("workspace").classList.remove("is-hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showCatalog() {
+      el("templateScreen").classList.add("is-hidden");
+      el("workspace").classList.add("is-hidden");
+      el("catalogScreen").classList.remove("is-hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showTemplates() {
+      el("workspace").classList.add("is-hidden");
+      el("catalogScreen").classList.add("is-hidden");
+      el("templateScreen").classList.remove("is-hidden");
+      updateTemplatePreviews();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ===== RENDERIZAÇÃO E DOWNLOAD =====
+    async function renderBannerBlob() {
+      const width = banner.offsetWidth;
+      const height = banner.offsetHeight;
+      const host = document.createElement("div");
+      host.className = "export-host";
+      host.style.width = `${width}px`;
+      host.style.height = `${height}px`;
+      host.style.position = "fixed";
+      host.style.left = "-9999px";
+      host.style.top = "0";
+
+      const clone = banner.cloneNode(true);
+      clone.removeAttribute("id");
+      clone.style.transform = "none";
+      clone.style.transformOrigin = "top left";
+      clone.style.width = `${width}px`;
+      clone.style.height = `${height}px`;
+      clone.style.margin = "0";
+      clone.style.position = "relative";
+      clone.style.overflow = "hidden";
+      clone.style.background = "#10151b";
+      host.appendChild(clone);
+      document.body.appendChild(host);
+
+      try {
+        await document.fonts.ready;
+        await waitForImages(clone);
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const canvas = await html2canvas(clone, {
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#10151b",
+          scale: 2,
+          width: width,
+          height: height,
+          logging: false,
+          imageTimeout: 15000
+        });
+
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => resolve(blob), "image/png", 1);
+        });
+      } finally {
+        host.remove();
+      }
+    }
+
+    function waitForImages(root) {
+      const images = [...root.querySelectorAll("img")].filter(img => img.src);
+      return Promise.all(images.map(async img => {
+        if (!img.complete) {
+          await new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+            setTimeout(resolve, 6000);
+          });
+        }
+        if (img.decode) {
+          try { await img.decode(); } catch (_) {}
+        }
+      }));
+    }
+
+    function exportFilename() {
+      const cleanTitle = (el("titleInput").value || "banner").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+      const names = { editorial:"max-editorial", cinema:"max-cinema", poster:"max-poster", release:"max-estreia", minimal:"max-clean", recommendation:"max-indica" };
+      return `${cleanTitle}-${names[state.template] || "gerador-max"}-${state.format}.png`;
+    }
+
+    async function downloadBanner() {
+      const btn = el("downloadBtn");
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Gerando...";
+      
+      try {
+        const blob = await renderBannerBlob();
+        if (!blob) throw new Error("Não foi possível gerar a imagem.");
+        
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const url = URL.createObjectURL(blob);
+        
+        if (isIOS) {
+          const win = window.open('', '_blank');
+          if (win) {
+            win.document.write(`
+              <html>
+                <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0f16;padding:20px;margin:0;flex-direction:column;">
+                  <img src="${url}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" />
+                  <p style="color:white;margin-top:20px;font-family:sans-serif;text-align:center;">👆 Toque e segure a imagem para salvar em Fotos</p>
+                  <button onclick="window.close()" style="padding:12px 30px;background:#ff6b00;border:none;border-radius:10px;color:white;font-weight:bold;cursor:pointer;margin-top:10px;">Fechar</button>
+                </body>
+              </html>
+            `);
+            win.document.close();
+          }
+          notify("📱 Abrimos uma nova tela. Toque e segure a imagem para salvar.", "success");
+        } else {
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = exportFilename();
+          link.rel = "noopener";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+          notify("✅ Banner baixado com sucesso!", "success");
+        }
+      } catch (error) {
+        console.error(error);
+        notify("❌ Erro ao gerar o banner: " + error.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    async function shareBanner() {
+      const btn = el("exportBtn");
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Gerando...";
+      
+      try {
+        const blob = await renderBannerBlob();
+        if (!blob) throw new Error("Não foi possível gerar a imagem.");
+        
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          showGeneratedResult(blob);
+          notify("📱 Banner pronto! Toque e segure a imagem para salvar.", "success");
+        } else {
+          const file = new File([blob], exportFilename(), { type: "image/png" });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: "Banner Gerador Max" });
+          } else {
+            showGeneratedResult(blob);
+          }
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") {
+          console.error(error);
+          notify("❌ " + error.message, "error");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    function showGeneratedResult(blob) {
+      window._generatedBlob = blob;
+      if (window._generatedUrl) URL.revokeObjectURL(window._generatedUrl);
+      window._generatedUrl = URL.createObjectURL(blob);
+      el("resultImage").src = window._generatedUrl;
+      el("resultModal").classList.add("show");
+      el("resultModal").setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeGeneratedResult() {
+      el("resultModal").classList.remove("show");
+      el("resultModal").setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function downloadReadyImage() {
+      const blob = window._generatedBlob;
+      if (!blob) { notify("Nenhuma imagem pronta.", "error"); return; }
+      
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const url = URL.createObjectURL(blob);
+      
+      if (isIOS) {
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(`
+            <html>
+              <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+              <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0f16;padding:20px;margin:0;flex-direction:column;">
+                <img src="${url}" style="max-width:100%;max-height:70vh;border-radius:12px;" />
+                <p style="color:white;margin-top:20px;text-align:center;">👆 Toque e segure para salvar</p>
+                <button onclick="window.close()" style="padding:12px 30px;background:#ff6b00;border:none;border-radius:10px;color:white;font-weight:bold;cursor:pointer;">Fechar</button>
+              </body>
+            </html>
+          `);
+          win.document.close();
+        }
+      } else {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = exportFilename();
+        link.rel = "noopener";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }
+    }
+
+    function saveProject() {
+      const project = { ...state, kicker: el("kickerInput").value, title: el("titleInput").value, subtitle: el("subtitleInput").value, showLogo: el("logoToggle").checked, showMeta: el("metaToggle").checked };
+      localStorage.setItem("geradorMaxProject", JSON.stringify(project));
+      notify("💾 Projeto salvo neste navegador.", "success");
+    }
+
+    function restoreProject() {
+      const saved = localStorage.getItem("geradorMaxProject");
+      if (!saved) return;
+      try {
+        const p = JSON.parse(saved);
+        state.format = p.format || "square";
+        state.template = p.template || localStorage.getItem("geradorMaxLastTemplate") || "editorial";
+        state.accent = p.accent || "#ff6b00";
+        state.zoom = p.zoom || 100;
+        state.shade = p.shade || 100;
+        state.position = p.position || "center";
+        state.watermarkOpacity = p.watermarkOpacity || 7;
+        el("logoToggle").checked = p.showLogo !== false;
+        el("metaToggle").checked = p.showMeta !== false;
+        el("accentInput").value = state.accent;
+        el("zoomRange").value = state.zoom;
+        el("shadeRange").value = state.shade;
+        el("positionSelect").value = state.position;
+        el("zoomValue").textContent = `${state.zoom}%`;
+        el("shadeValue").textContent = `${state.shade}%`;
+        el("watermarkRange").value = state.watermarkOpacity;
+        el("watermarkValue").textContent = `${state.watermarkOpacity}%`;
+        setFormat(state.format);
+        setTemplate(state.template);
+        el("workspace").classList.add("is-hidden");
+      } catch (e) {
+        console.warn("Projeto salvo inválido", e);
+        el("workspace").classList.add("is-hidden");
+      }
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) return notify("Escolha um arquivo de imagem.", "error");
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.logo = reader.result;
+        localStorage.setItem("geradorMaxLogo", state.logo);
+        el("brandLogo").src = state.logo;
+        el("logoToggle").checked = true;
+        notify("✅ Logomarca atualizada.");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function escapeHtml(value = "") {
+      return String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+    }
+
+    // ===== EVENT LISTENERS =====
+    el("searchBtn").addEventListener("click", searchTitles);
+    el("mainSearch").addEventListener("keydown", e => { if (e.key === "Enter") searchTitles(); });
+    el("formatControls").addEventListener("click", e => { const btn = e.target.closest("[data-format]"); if (btn) setFormat(btn.dataset.format); });
+    el("templateGrid").addEventListener("click", e => { const btn = e.target.closest("[data-template]"); if (btn) chooseTemplate(btn.dataset.template); });
+    el("backCatalogBtn").addEventListener("click", showCatalog);
+    el("backTemplatesBtn").addEventListener("click", showTemplates);
+    el("changeTemplateBtn").addEventListener("click", showTemplates);
+    ["kickerInput", "titleInput", "subtitleInput"].forEach(id => el(id).addEventListener("input", updateText));
+    el("accentInput").addEventListener("input", e => { state.accent = e.target.value; applyState(); });
+    el("positionSelect").addEventListener("change", e => { state.position = e.target.value; applyState(); });
+    el("zoomRange").addEventListener("input", e => { state.zoom = Number(e.target.value); el("zoomValue").textContent = `${state.zoom}%`; applyState(); });
+    el("shadeRange").addEventListener("input", e => { state.shade = Number(e.target.value); el("shadeValue").textContent = `${state.shade}%`; applyState(); });
+    el("logoToggle").addEventListener("change", applyState);
+    el("metaToggle").addEventListener("change", applyState);
+    el("watermarkToggle").addEventListener("change", applyState);
+    el("watermarkRange").addEventListener("input", e => { state.watermarkOpacity = Number(e.target.value); el("watermarkValue").textContent = `${state.watermarkOpacity}%`; applyState(); });
+    el("logoUpload").addEventListener("change", handleLogoUpload);
+    el("exportBtn").addEventListener("click", shareBanner);
+    el("downloadBtn").addEventListener("click", downloadBanner);
+    el("shareReadyBtn").addEventListener("click", async () => {
+      const blob = window._generatedBlob;
+      if (!blob) return;
+      try {
+        const file = new File([blob], exportFilename(), { type: "image/png" });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: "Banner Gerador Max" });
+        } else {
+          downloadReadyImage();
+        }
+      } catch (e) {
+        if (e?.name !== "AbortError") notify("Não foi possível compartilhar.", "error");
+      }
+    });
+    el("downloadReadyBtn").addEventListener("click", downloadReadyImage);
+    el("closeResultBtn").addEventListener("click", closeGeneratedResult);
+    el("resultModal").addEventListener("click", e => { if (e.target === el("resultModal")) closeGeneratedResult(); });
+    el("saveProjectBtn").addEventListener("click", saveProject);
+    window.addEventListener("resize", scalePreview);
+
+    el("brandLogo").src = state.logo;
+    restoreProject();
+    applyState();
+    el("catalogScreen").classList.remove("is-hidden");
+    el("templateScreen").classList.add("is-hidden");
+    el("workspace").classList.add("is-hidden");
+    loadCatalog();
+  </script>
+</body>
+</html>
