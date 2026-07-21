@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#ff6b00">
+  <title>Gerador Max — Banners profissionais</title>
+  <link rel="icon" href="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ===== RESET E VARIAVEIS ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #ff6b00;
+      --orange-2: #ff8533;
+      --dark: #070c13;
+      --panel: #0d1520;
+      --panel-2: #121d2a;
+      --line: rgba(255,255,255,.08);
+      --muted: #8a9aa8;
+      --text: #f8fafc;
+      --radius: 16px;
+      --shadow: 0 12px 40px rgba(0,0,0,.4);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--dark);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== MOBILE-FIRST LAYOUT ===== */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 12px 14px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0 14px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 16px;
+    }
+    .header-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .header-logo img { width: 32px; height: 32px; object-fit: contain; }
+    .header h1 { font-size: 18px; font-weight: 700; }
+    .header h1 span { color: var(--orange); }
+    .header small { display: block; color: var(--muted); font-size: 10px; font-weight: 400; }
+
+    /* ===== SEARCH ===== */
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-box input {
+      flex: 1;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .search-box input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,0,.12); }
+    .search-box input::placeholder { color: rgba(255,255,255,.25); }
+    .search-box button {
+      height: 44px;
+      padding: 0 18px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .search-box button:active { transform: scale(.96); }
+
+    /* ===== MOVIE STRIP ===== */
+    .strip-wrap { margin-bottom: 18px; }
+    .strip-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .strip-head h3 { font-size: 15px; font-weight: 600; }
+    .strip-head small { color: var(--muted); font-size: 10px; }
+    .strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .strip::-webkit-scrollbar { height: 3px; }
+    .strip::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+    .movie-card {
+      flex: 0 0 110px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .movie-card:active { transform: scale(.96); }
+    .movie-card img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+    }
+    .movie-card div { padding: 6px 8px; }
+    .movie-card strong { display: block; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .movie-card small { color: var(--muted); font-size: 8px; }
+
+    /* ===== TEMPLATE SCREEN ===== */
+    .template-screen { padding: 0 0 20px; }
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      color: #fff;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .back-btn:active { transform: scale(.95); }
+
+    .selected-info {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      background: var(--panel);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      margin: 12px 0 16px;
+    }
+    .selected-info img {
+      width: 50px;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .selected-info strong { font-size: 13px; display: block; }
+    .selected-info small { color: var(--muted); font-size: 10px; }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .template-card {
+      padding: 8px;
+      border-radius: 14px;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+    }
+    .template-card:active { transform: scale(.97); }
+    .template-card.active { border-color: var(--orange); box-shadow: 0 0 20px rgba(255,107,0,.12); }
+    
+    .template-preview {
+      aspect-ratio: 1/1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #121d2a center/cover no-repeat;
+      position: relative;
+    }
+    .template-preview .overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+    }
+    /* Templates previews... (mantenha o mesmo) */
+
+    .template-name { font-size: 11px; font-weight: 600; display: block; margin-top: 6px; }
+    .template-desc { color: var(--muted); font-size: 9px; }
+
+    /* ===== WORKSPACE ===== */
+    .workspace { display: none; }
+    .workspace.active { display: block; }
+
+    .preview-area {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      padding: 12px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-area .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,107,0,.15);
+      color: var(--orange);
+      font-size: 8px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,107,0,.2);
+      z-index: 5;
+      letter-spacing: .04em;
+    }
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .preview-top h2 { font-size: 14px; font-weight: 600; }
+    .preview-top .actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .preview-top .actions button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      transition: var(--transition);
+      min-height: 32px;
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      border: 1px solid var(--line);
+    }
+    .btn-ghost:active { transform: scale(.95); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      color: #fff;
+    }
+    .btn-primary:active { transform: scale(.95); }
+
+    /* ===== STAGE - CORRIGIDO ===== */
+    .stage {
+      background: #0a111b;
+      border-radius: 12px;
+      min-height: 380px;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage .grid-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+
+    /* ===== BANNER WRAP - CORRIGIDO ===== */
+    #banner-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+    }
+
+    /* ===== BANNER - CORRIGIDO ===== */
+    #banner {
+      width: 540px;
+      height: 540px;
+      position: relative;
+      overflow: hidden;
+      background: #10151b;
+      border-radius: 4px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.5);
+      flex-shrink: 0;
+    }
+    #banner.format-story { width: 540px; height: 960px; }
+    #banner.format-landscape { width: 960px; height: 540px; }
+
+    .banner-bg {
+      position: absolute;
+      inset: -5%;
+      width: 110%;
+      height: 110%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .banner-shade {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: rgba(0,0,0,.4);
+    }
+    .banner-poster {
+      position: absolute;
+      z-index: 2;
+      object-fit: cover;
+      display: none;
+      border-radius: 6px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    }
+    .brand-logo {
+      position: absolute;
+      z-index: 4;
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      right: 28px;
+      top: 28px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .banner-content {
+      position: absolute;
+      z-index: 3;
+      left: 32px;
+      bottom: 60px;
+      right: 32px;
+    }
+    .banner-kicker {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 4px;
+    }
+    .banner-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 58px;
+      line-height: .9;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,.3);
+      margin: 0;
+    }
+    .banner-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: rgba(255,255,255,.85);
+      margin: 6px 0 0;
+      line-height: 1.3;
+      text-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .banner-meta {
+      display: flex;
+      gap: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,.7);
+      margin-top: 10px;
+    }
+    .banner-meta span + span::before {
+      content: "•";
+      margin-right: 12px;
+      color: var(--orange);
+    }
+    .watermark-layer {
+      position: absolute;
+      inset: -40px;
+      z-index: 5;
+      pointer-events: none;
+      opacity: .05;
+      background-repeat: repeat;
+      background-size: 120px auto;
+      background-position: 20px 20px;
+      transform: rotate(-14deg) scale(1.15);
+      mix-blend-mode: screen;
+    }
+    .banner-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      opacity: .06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.26'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    /* Templates... (mantenha os mesmos estilos) */
+
+    /* ===== EDITOR ===== */
+    .editor {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .editor .group { margin-bottom: 12px; }
+    .editor .group:last-child { margin-bottom: 0; }
+    .editor label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .editor input, .editor textarea, .editor select {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .editor input:focus, .editor textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255,107,0,.08);
+    }
+    .editor textarea { min-height: 50px; resize: vertical; font-size: 12px; }
+    .editor .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .editor input[type="color"] { height: 40px; padding: 4px; cursor: pointer; }
+    .editor input[type="range"] {
+      width: 100%;
+      height: 4px;
+      -webkit-appearance: none;
+      background: var(--line);
+      border-radius: 2px;
+      padding: 0;
+    }
+    .editor input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+    }
+    .editor .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .editor .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .editor .switch-row span { font-size: 11px; color: var(--muted); }
+    .switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider {
+      position: absolute;
+      inset: 0;
+      background: #2a3440;
+      border-radius: 999px;
+      transition: var(--transition);
+    }
+    .switch .slider::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    .switch input:checked + .slider { background: var(--orange); }
+    .switch input:checked + .slider::before { transform: translateX(18px); }
+
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px;
+      border: 1px dashed rgba(255,255,255,.15);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      background: rgba(255,255,255,.03);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .upload-btn:active { transform: scale(.98); }
+
+    .image-picker {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0 6px;
+    }
+    .image-picker .opt {
+      flex: 0 0 70px;
+      height: 44px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .image-picker .opt.active { border-color: var(--orange); }
+    .image-picker .opt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ===== RESULT MODAL ===== */
+    .result-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      background: rgba(0,0,0,.94);
+      backdrop-filter: blur(16px);
+      padding: 20px 16px;
+      overflow-y: auto;
+    }
+    .result-modal.show { display: block; animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+    
+    .result-card { max-width: 400px; margin: 0 auto; }
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .result-head h2 { font-size: 16px; }
+    .result-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      color: #fff;
+      font-size: 18px;
+    }
+    .result-img {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid var(--line);
+    }
+    .result-img img { width: 100%; height: auto; display: block; }
+    .result-help {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .result-actions button {
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      max-width: 90%;
+      padding: 10px 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--orange);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+      transition: all .3s ease;
+      pointer-events: none;
+      text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== UTILITIES ===== */
+    .hidden { display: none !important; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .gap-2 { gap: 8px; }
+    .mt-2 { margin-top: 8px; }
+    .mb-2 { margin-bottom: 8px; }
+    .text-muted { color: var(--muted); }
+    .text-orange { color: var(--orange); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 3px; height: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+    /* ===== RESPONSIVO ===== */
+    @media (min-width: 480px) {
+      .container { max-width: 600px; padding: 16px 20px; }
+      #banner { width: 600px; height: 600px; }
+      #banner.format-story { width: 600px; height: 1066px; }
+      #banner.format-landscape { width: 1066px; height: 600px; }
+      .stage { height: 520px; min-height: 420px; }
+    }
+    @media (min-width: 768px) {
+      .container { max-width: 800px; }
+      .stage { height: 560px; min-height: 460px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="app">
+  
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-logo"><img src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" alt=""></div>
+    <div><h1>Gerador <span>Max</span></h1><small>Banners profissionais</small></div>
+  </header>
+
+  <!-- ===== CATÁLOGO ===== -->
+  <div id="catalogScreen">
+    <div class="search-box">
+      <input id="searchInput" type="search" placeholder="Buscar filme ou série..." autocomplete="off">
+      <button id="searchBtn">Buscar</button>
+    </div>
+
+    <div id="searchResults" class="strip-wrap hidden">
+      <div class="strip-head"><h3 id="searchTitle">Resultados</h3><small>Toque para selecionar</small></div>
+      <div class="strip" id="searchStrip"></div>
+    </div>
+
+    <div class="strip-wrap">
+      <div class="strip-head"><h3>🔥 Em alta</h3><small>Filmes</small></div>
+      <div class="strip" id="moviesStrip"><div class="text-muted" style="padding:10px;font-size:12px;">Carregando...</div></div>
+    </div>
+
+    <div class="strip-wrap">
+      <div class="strip-head"><h3>📺 Séries</h3><small>Em destaque</small></div>
+      <div class="strip" id="seriesStrip"><div class="text-muted" style="padding:10px;font-size:12px;">Carregando...</div></div>
+    </div>
+
+    <div class="strip-wrap">
+      <div class="strip-head"><h3>🎬 Lançamentos</h3><small>Novidades</small></div>
+      <div class="strip" id="releasesStrip"><div class="text-muted" style="padding:10px;font-size:12px;">Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- ===== TEMPLATES ===== -->
+  <div id="templateScreen" class="template-screen hidden">
+    <div class="flex-between" style="margin-bottom:12px;">
+      <button class="back-btn" id="backCatalogBtn">‹</button>
+      <span style="font-size:13px;font-weight:600;">Escolha o visual</span>
+      <span style="width:40px;"></span>
+    </div>
+
+    <div class="selected-info" id="selectedInfo">
+      <img id="selectedPoster" src="" alt="">
+      <div>
+        <strong id="selectedName">Nenhum selecionado</strong>
+        <small id="selectedMeta">Escolha um título no catálogo</small>
+      </div>
+    </div>
+
+    <div class="template-grid" id="templateGrid">
+      <button class="template-card active" data-template="editorial">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Destaque</span>
+        <span class="template-desc">Título com leitura lateral</span>
+      </button>
+      <button class="template-card" data-template="cinema">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Cinema</span>
+        <span class="template-desc">Título central e impacto</span>
+      </button>
+      <button class="template-card" data-template="poster">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Pôster</span>
+        <span class="template-desc">Capa vertical com info ao lado</span>
+      </button>
+      <button class="template-card" data-template="release">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Estreia</span>
+        <span class="template-desc">Faixa de cor e lançamento</span>
+      </button>
+      <button class="template-card" data-template="minimal">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Essencial</span>
+        <span class="template-desc">Limpo, elegante e minimalista</span>
+      </button>
+      <button class="template-card" data-template="recommendation">
+        <div class="template-preview" style="background-image:url('');"><div class="overlay"></div></div>
+        <span class="template-name">Max Recomenda</span>
+        <span class="template-desc">Curadoria e indicação</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== WORKSPACE ===== -->
+  <div id="workspace" class="workspace">
+    <!-- PREVIEW -->
+    <div class="preview-area">
+      <span class="badge">PRÉVIA</span>
+      <div class="preview-top">
+        <h2>🎨 Seu banner</h2>
+        <div class="actions">
+          <button class="btn-ghost" id="saveBtn">💾 Salvar</button>
+          <button class="btn-ghost" id="downloadBtn">⬇️ Baixar</button>
+          <button class="btn-primary" id="exportBtn">📤 Gerar</button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="grid-pattern"></div>
+        <div id="banner-wrap">
+          <div id="banner" data-template="editorial" class="format-square">
+            <img class="banner-bg" id="bannerBg" alt="" crossorigin="anonymous">
+            <div class="banner-shade" id="bannerShade"></div>
+            <img class="banner-poster" id="bannerPoster" alt="" crossorigin="anonymous">
+            <img class="brand-logo" id="brandLogo" alt="" src="https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png" crossorigin="anonymous">
+            <div class="watermark-layer" id="watermarkLayer"></div>
+            <div class="banner-grain"></div>
+            <div class="banner-content">
+              <div class="banner-kicker" id="bannerKicker">NOVO NO CATÁLOGO</div>
+              <h2 class="banner-title" id="bannerTitle">Escolha um filme</h2>
+              <p class="banner-subtitle" id="bannerSubtitle">Selecione um título no catálogo</p>
+              <div class="banner-meta" id="bannerMeta"><span id="metaYear">2026</span><span id="metaGenre">Filme</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="editor">
+      <div class="group">
+        <label>Formato</label>
+        <div style="display:flex;gap:6px;" id="formatControls">
+          <button class="btn-ghost active" data-format="square" style="flex:1;padding:6px;font-size:11px;border-radius:8px;">Quadrado</button>
+          <button class="btn-ghost" data-format="story" style="flex:1;padding:6px;font-size:11px;border-radius:8px;">Story</button>
+          <button class="btn-ghost" data-format="landscape" style="flex:1;padding:6px;font-size:11px;border-radius:8px;">Horizontal</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <label>Selo</label>
+        <input id="kickerInput" value="NOVO NO CATÁLOGO" maxlength="30">
+      </div>
+
+      <div class="group">
+        <label>Título</label>
+        <input id="titleInput" value="Escolha um filme" maxlength="60">
+      </div>
+
+      <div class="group">
+        <label>Subtítulo</label>
+        <textarea id="subtitleInput" maxlength="100">Selecione um título no catálogo</textarea>
+      </div>
+
+      <div class="group">
+        <label>Cor de destaque</label>
+        <input id="accentInput" type="color" value="#ff6b00">
+      </div>
+
+      <div class="row">
+        <div class="group">
+          <label>Zoom</label>
+          <input id="zoomRange" type="range" min="100" max="145" value="100">
+          <div class="range-labels"><span>100%</span><span id="zoomValue">100%</span></div>
+        </div>
+        <div class="group">
+          <label>Escurecimento</label>
+          <input id="shadeRange" type="range" min="50" max="120" value="100">
+          <div class="range-labels"><span>50%</span><span id="shadeValue">100%</span></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <label>Enquadramento</label>
+        <select id="positionSelect">
+          <option value="center">Centro</option>
+          <option value="left">Esquerda</option>
+          <option value="right">Direita</option>
+          <option value="top">Topo</option>
+        </select>
+      </div>
+
+      <div class="group">
+        <label>Imagens disponíveis</label>
+        <div class="image-picker" id="imagePicker"><span class="text-muted" style="font-size:11px;">Selecione um título primeiro</span></div>
+      </div>
+
+      <div class="group" style="border-top:1px solid var(--line);padding-top:12px;">
+        <div class="switch-row"><span>Logomarca</span><label class="switch"><input id="logoToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="switch-row"><span>Ano e gênero</span><label class="switch"><input id="metaToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="switch-row"><span>Marca d'água</span><label class="switch"><input id="watermarkToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="switch-row" style="margin-top:6px;">
+          <span style="font-size:10px;color:var(--muted);">Opacidade</span>
+          <input id="watermarkRange" type="range" min="2" max="18" value="7" style="width:100px;height:3px;">
+          <span id="watermarkValue" style="font-size:10px;color:var(--muted);width:30px;">7%</span>
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="upload-btn" for="logoUpload">📤 Enviar logomarca</label>
+        <input id="logoUpload" type="file" accept="image/*" hidden>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULT MODAL ===== -->
+  <div class="result-modal" id="resultModal">
+    <div class="result-card">
+      <div class="result-head">
+        <h2>✨ Banner pronto</h2>
+        <button class="result-close" id="closeResult">✕</button>
+      </div>
+      <div class="result-img"><img id="resultImage" alt=""></div>
+      <p class="result-help">📱 Toque e segure a imagem para salvar em Fotos</p>
+      <div class="result-actions">
+        <button class="btn-primary" id="shareResult">📤 Compartilhar</button>
+        <button class="btn-ghost" id="downloadResult">⬇️ Baixar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const TMDB_KEY = "54b9cff0f48a3f127fa5cd5906bbe251";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_IMG = "https://image.tmdb.org/t/p/original";
+const TMDB_POSTER = "https://image.tmdb.org/t/p/w500";
+const DEFAULT_LOGO = "https://i.postimg.cc/qB9QRnt9/Logotipo-delicado-monograma-feminino-bege-e-branco.png";
+
+// ===== STATE =====
+const state = {
+  format: 'square',
+  template: 'editorial',
+  item: null,
+  details: null,
+  images: [],
+  posters: [],
+  selectedImage: '',
+  poster: '',
+  logo: localStorage.getItem('geradorMaxLogo') || DEFAULT_LOGO,
+  accent: '#ff6b00',
+  zoom: 100,
+  shade: 100,
+  position: 'center',
+  watermarkOpacity: 7,
+  showLogo: true,
+  showMeta: true,
+  showWatermark: true
+};
+
+// ===== DOM REFS =====
+const $ = id => document.getElementById(id);
+const banner = $('banner');
+const toast = $('toast');
+
+// ===== TOAST =====
+function notify(msg, type = 'info') {
+  toast.textContent = msg;
+  toast.style.borderLeftColor = type === 'error' ? '#ff5a67' : 'var(--orange)';
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ===== API =====
+async function api(path, params = {}) {
+  const q = new URLSearchParams({ api_key: TMDB_KEY, language: 'pt-BR', ...params });
+  const res = await fetch(`${TMDB_BASE}${path}?${q}`);
+  if (!res.ok) throw new Error(`TMDB: ${res.status}`);
+  return res.json();
+}
+
+function getTitle(item) { return item.title || item.name || item.original_title || 'Sem título'; }
+function getYear(item) { return (item.release_date || item.first_air_date || '').slice(0, 4) || '—'; }
+function mediaType(item) { return item.media_type || (item.first_air_date ? 'tv' : 'movie'); }
+
+// ===== CATÁLOGO =====
+async function loadCatalog() {
+  try {
+    const [movies, series, releases] = await Promise.all([
+      api('/trending/movie/week'),
+      api('/trending/tv/week'),
+      api('/movie/now_playing', { region: 'BR' })
+    ]);
+    renderStrip((movies.results || []).filter(x => x.poster_path).slice(0, 15), 'moviesStrip');
+    renderStrip((series.results || []).filter(x => x.poster_path).slice(0, 15), 'seriesStrip');
+    renderStrip((releases.results || []).filter(x => x.poster_path).slice(0, 15), 'releasesStrip');
+  } catch (e) {
+    ['moviesStrip','seriesStrip','releasesStrip'].forEach(id => $(id).innerHTML = `<span class="text-muted" style="font-size:11px;">Erro ao carregar</span>`);
+  }
+}
+
+function renderStrip(items, targetId) {
+  const strip = $(targetId);
+  if (!items.length) { strip.innerHTML = '<span class="text-muted" style="font-size:11px;">Nenhum resultado</span>'; return; }
+  strip.innerHTML = items.map((item, i) => `
+    <div class="movie-card" data-index="${i}">
+      <img src="${TMDB_POSTER + item.poster_path}" alt="${getTitle(item)}" loading="lazy">
+      <div><strong>${getTitle(item)}</strong><small>${getYear(item)}</small></div>
+    </div>
+  `).join('');
+  strip.querySelectorAll('.movie-card').forEach(el => {
+    el.addEventListener('click', () => selectTitle(items[Number(el.dataset.index)]));
+  });
+}
+
+async function searchTitles() {
+  const q = $('searchInput').value.trim();
+  if (!q) return;
+  const btn = $('searchBtn');
+  btn.textContent = '...';
+  try {
+    const data = await api('/search/multi', { query: q, include_adult: 'false' });
+    const results = (data.results || []).filter(x => x.poster_path && ['movie','tv'].includes(mediaType(x)));
+    const strip = $('searchStrip');
+    const section = $('searchResults');
+    if (!results.length) { notify('Nenhum resultado encontrado.', 'error'); section.classList.add('hidden'); return; }
+    $('searchTitle').textContent = `Resultados para "${q}"`;
+    section.classList.remove('hidden');
+    renderStrip(results.slice(0, 20), 'searchStrip');
+  } catch (e) { notify('Erro na busca: ' + e.message, 'error'); }
+  btn.textContent = 'Buscar';
+}
+
+// ===== SELECT TITLE =====
+async function selectTitle(item) {
+  state.item = item;
+  const type = mediaType(item);
+  try {
+    const [details, images] = await Promise.all([
+      api(`/${type}/${item.id}`, { append_to_response: 'credits' }),
+      api(`/${type}/${item.id}/images`, { include_image_language: 'pt,en,null', language: '' })
+    ]);
+    state.details = details;
+    state.poster = details.poster_path ? TMDB_IMG + details.poster_path : '';
+    const backdrops = (images.backdrops || []).filter(x => x.file_path).slice(0, 12);
+    state.images = backdrops.length ? backdrops : (details.backdrop_path ? [{ file_path: details.backdrop_path }] : []);
+    state.posters = (images.posters || []).filter(x => x.file_path).slice(0, 10);
+    state.selectedImage = state.images[0]?.file_path ? TMDB_IMG + state.images[0].file_path : state.poster;
+    
+    fillEditor();
+    updateBanner();
+    renderImages();
+    updateTemplatePreviews();
+    
+    $('selectedPoster').src = state.poster;
+    $('selectedName').textContent = getTitle(details);
+    $('selectedMeta').textContent = `${getYear(details)} · ${type === 'tv' ? 'Série' : 'Filme'}`;
+    
+    $('catalogScreen').classList.add('hidden');
+    $('templateScreen').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    notify(`${getTitle(details)} carregado! Escolha um template.`);
+  } catch (e) {
+    notify('Erro ao carregar: ' + e.message, 'error');
+  }
+}
+
+function fillEditor() {
+  const d = state.details;
+  const title = getTitle(d);
+  const overview = d.overview || 'Já disponível para assistir.';
+  $('titleInput').value = title;
+  $('subtitleInput').value = overview.length > 100 ? overview.slice(0, 97) + '...' : overview;
+  $('kickerInput').value = mediaType(state.item) === 'tv' ? 'SÉRIE EM DESTAQUE' : 'NOVO NO CATÁLOGO';
+  $('metaYear').textContent = getYear(d);
+  $('metaGenre').textContent = (d.genres || []).slice(0, 2).map(g => g.name).join(' · ') || (mediaType(state.item) === 'tv' ? 'Série' : 'Filme');
+}
+
+function renderImages() {
+  const picker = $('imagePicker');
+  const all = [...state.images, ...state.posters];
+  if (!all.length) { picker.innerHTML = '<span class="text-muted" style="font-size:11px;">Nenhuma imagem disponível</span>'; return; }
+  picker.innerHTML = all.map(img => `
+    <div class="opt ${(TMDB_IMG + img.file_path) === state.selectedImage ? 'active' : ''}" data-src="${TMDB_IMG + img.file_path}">
+      <img src="https://image.tmdb.org/t/p/w300${img.file_path}" alt="" loading="lazy">
+    </div>
+  `).join('');
+  picker.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => {
+      picker.querySelectorAll('.opt').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      state.selectedImage = el.dataset.src;
+      updateBanner();
+    });
+  });
+}
+
+function updateTemplatePreviews() {
+  const img = state.selectedImage || state.poster || '';
+  document.querySelectorAll('.template-preview').forEach(el => {
+    el.style.backgroundImage = img ? `url("${img}")` : 'none';
+  });
+}
+
+// ===== BANNER UPDATE =====
+function updateBanner() {
+  const t = state.template;
+  banner.dataset.template = t;
+  banner.className = `format-${state.format}`;
+  banner.style.setProperty('--accent', state.accent);
+  
+  $('bannerBg').src = state.selectedImage || state.poster || '';
+  $('bannerBg').style.transform = `scale(${state.zoom / 100})`;
+  $('bannerBg').style.objectPosition = state.position;
+  $('bannerShade').style.opacity = state.shade / 100;
+  
+  $('bannerPoster').src = state.poster || state.selectedImage || '';
+  $('bannerPoster').style.display = t === 'poster' ? 'block' : 'none';
+  
+  $('brandLogo').src = state.logo;
+  $('brandLogo').style.display = state.showLogo ? 'block' : 'none';
+  
+  $('bannerMeta').style.display = state.showMeta ? 'flex' : 'none';
+  
+  const wm = $('watermarkLayer');
+  wm.style.display = state.showWatermark ? 'block' : 'none';
+  wm.style.opacity = state.watermarkOpacity / 100;
+  wm.style.backgroundImage = `url("${state.logo}")`;
+  
+  // Textos
+  $('bannerKicker').textContent = $('kickerInput').value.trim() || 'DESTAQUE';
+  $('bannerTitle').textContent = $('titleInput').value.trim() || 'Sem título';
+  $('bannerSubtitle').textContent = $('subtitleInput').value.trim() || '';
+  
+  scaleBanner();
+}
+
+// ===== SCALE BANNER - CORRIGIDO =====
+function scaleBanner() {
+  const stage = $('stage');
+  const wrap = $('banner-wrap');
+  const bannerEl = banner;
+  
+  // Obter dimensões do container
+  const stageW = stage.clientWidth - 32;
+  const stageH = Math.min(stage.clientHeight - 32, 560);
+  
+  // Obter dimensões do banner
+  const bannerW = bannerEl.offsetWidth || 540;
+  const bannerH = bannerEl.offsetHeight || 540;
+  
+  // Calcular escala para caber no container
+  const scaleX = stageW / bannerW;
+  const scaleY = stageH / bannerH;
+  const scale = Math.min(scaleX, scaleY, 1);
+  
+  // Aplicar escala e centralizar
+  wrap.style.transform = `scale(${Math.max(scale, 0.2)})`;
+  wrap.style.transformOrigin = 'center center';
+  wrap.style.display = 'flex';
+  wrap.style.alignItems = 'center';
+  wrap.style.justifyContent = 'center';
+  wrap.style.width = '100%';
+  wrap.style.height = '100%';
+}
+
+// ===== TEMPLATE =====
+function setTemplate(t) {
+  state.template = t;
+  document.querySelectorAll('.template-card').forEach(el => {
+    el.classList.toggle('active', el.dataset.template === t);
+  });
+  updateBanner();
+}
+
+function chooseTemplate(t) {
+  setTemplate(t);
+  $('templateScreen').classList.add('hidden');
+  $('workspace').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(scaleBanner, 150);
+}
+
+// ===== DOWNLOAD =====
+async function renderBannerBlob() {
+  const w = banner.offsetWidth || 540;
+  const h = banner.offsetHeight || 540;
+  const host = document.createElement('div');
+  host.style.cssText = `position:fixed;left:-9999px;top:0;width:${w}px;height:${h}px;background:#10151b;z-index:-9999;`;
+  const clone = banner.cloneNode(true);
+  clone.style.cssText = `width:${w}px;height:${h}px;transform:none;transform-origin:top left;margin:0;position:relative;overflow:hidden;background:#10151b;`;
+  clone.removeAttribute('id');
+  host.appendChild(clone);
+  document.body.appendChild(host);
+  
+  try {
+    await document.fonts.ready;
+    const imgs = clone.querySelectorAll('img');
+    await Promise.all([...imgs].map(img => new Promise(resolve => {
+      if (img.complete) resolve();
+      else { img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 5000); }
+    })));
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const canvas = await html2canvas(clone, {
+      useCORS: true,
+      scale: 2,
+      width: w,
+      height: h,
+      backgroundColor: '#10151b',
+      logging: false
+    });
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1));
+  } finally { host.remove(); }
+}
+
+function getFilename() {
+  const t = $('titleInput').value.trim() || 'banner';
+  const clean = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase().slice(0, 30);
+  return `${clean}-${state.template}-${state.format}.png`;
+}
+
+async function downloadBanner() {
+  const btn = $('downloadBtn');
+  btn.textContent = '⏳';
+  try {
+    const blob = await renderBannerBlob();
+    if (!blob) throw new Error('Falha ao gerar');
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const url = URL.createObjectURL(blob);
+    if (isIOS) {
+      const win = window.open('', '_blank');
+      if (win) {
+        win.document.write(`
+          <html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+          <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0f16;padding:20px;margin:0;flex-direction:column;">
+            <img src="${url}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);" />
+            <p style="color:white;margin-top:16px;text-align:center;font-family:sans-serif;font-size:14px;">👆 Toque e segure para salvar</p>
+            <button onclick="window.close()" style="padding:12px 30px;background:#ff6b00;border:none;border-radius:10px;color:white;font-weight:bold;font-size:14px;cursor:pointer;margin-top:10px;">Fechar</button>
+          </body></html>
+        `);
+        win.document.close();
+        notify('📱 Toque e segure a imagem para salvar', 'success');
+      }
+    } else {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = getFilename();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      notify('✅ Banner baixado!', 'success');
+    }
+  } catch (e) { notify('❌ Erro: ' + e.message, 'error'); }
+  btn.textContent = '⬇️';
+}
+
+async function exportBanner() {
+  const btn = $('exportBtn');
+  btn.textContent = '⏳';
+  try {
+    const blob = await renderBannerBlob();
+    if (!blob) throw new Error('Falha ao gerar');
+    const url = URL.createObjectURL(blob);
+    $('resultImage').src = url;
+    $('resultModal').classList.add('show');
+    window._resultBlob = blob;
+    window._resultUrl = url;
+    notify('✨ Banner pronto!', 'success');
+  } catch (e) { notify('❌ ' + e.message, 'error'); }
+  btn.textContent = '📤';
+}
+
+function shareResult() {
+  const blob = window._resultBlob;
+  if (!blob) return;
+  const file = new File([blob], getFilename(), { type: 'image/png' });
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    navigator.share({ files: [file], title: 'Banner Gerador Max' }).catch(() => {});
+  } else {
+    downloadResult();
+  }
+}
+
+function downloadResult() {
+  const blob = window._resultBlob;
+  if (!blob) return;
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const url = URL.createObjectURL(blob);
+  if (isIOS) {
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(`
+        <html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+        <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0f16;padding:20px;margin:0;flex-direction:column;">
+          <img src="${url}" style="max-width:100%;max-height:70vh;border-radius:12px;" />
+          <p style="color:white;margin-top:16px;text-align:center;">👆 Toque e segure para salvar</p>
+          <button onclick="window.close()" style="padding:12px 30px;background:#ff6b00;border:none;border-radius:10px;color:white;font-weight:bold;cursor:pointer;">Fechar</button>
+        </body></html>
+      `);
+      win.document.close();
+    }
+  } else {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = getFilename();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+}
+
+// ===== SAVE PROJECT =====
+function saveProject() {
+  const data = {
+    format: state.format,
+    template: state.template,
+    accent: state.accent,
+    zoom: state.zoom,
+    shade: state.shade,
+    position: state.position,
+    watermarkOpacity: state.watermarkOpacity,
+    showLogo: state.showLogo,
+    showMeta: state.showMeta,
+    showWatermark: state.showWatermark,
+    kicker: $('kickerInput').value,
+    title: $('titleInput').value,
+    subtitle: $('subtitleInput').value,
+    logo: state.logo
+  };
+  localStorage.setItem('geradorMaxProject', JSON.stringify(data));
+  notify('💾 Projeto salvo!', 'success');
+}
+
+function restoreProject() {
+  try {
+    const data = JSON.parse(localStorage.getItem('geradorMaxProject'));
+    if (!data) return;
+    state.format = data.format || 'square';
+    state.template = data.template || 'editorial';
+    state.accent = data.accent || '#ff6b00';
+    state.zoom = data.zoom || 100;
+    state.shade = data.shade || 100;
+    state.position = data.position || 'center';
+    state.watermarkOpacity = data.watermarkOpacity || 7;
+    state.showLogo = data.showLogo !== undefined ? data.showLogo : true;
+    state.showMeta = data.showMeta !== undefined ? data.showMeta : true;
+    state.showWatermark = data.showWatermark !== undefined ? data.showWatermark : true;
+    state.logo = data.logo || DEFAULT_LOGO;
+    
+    if (data.kicker) $('kickerInput').value = data.kicker;
+    if (data.title) $('titleInput').value = data.title;
+    if (data.subtitle) $('subtitleInput').value = data.subtitle;
+    
+    $('accentInput').value = state.accent;
+    $('zoomRange').value = state.zoom;
+    $('shadeRange').value = state.shade;
+    $('positionSelect').value = state.position;
+    $('watermarkRange').value = state.watermarkOpacity;
+    $('zoomValue').textContent = state.zoom + '%';
+    $('shadeValue').textContent = state.shade + '%';
+    $('watermarkValue').textContent = state.watermarkOpacity + '%';
+    $('logoToggle').checked = state.showLogo;
+    $('metaToggle').checked = state.showMeta;
+    $('watermarkToggle').checked = state.showWatermark;
+    $('brandLogo').src = state.logo;
+    localStorage.setItem('geradorMaxLogo', state.logo);
+    
+    document.querySelectorAll('[data-format]').forEach(el => {
+      el.classList.toggle('active', el.dataset.format === state.format);
+    });
+    document.querySelectorAll('.template-card').forEach(el => {
+      el.classList.toggle('active', el.dataset.template === state.template);
+    });
+    updateBanner();
+  } catch (e) { /* ignore */ }
+}
+
+// ===== LOGO UPLOAD =====
+function handleLogoUpload(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.logo = reader.result;
+    localStorage.setItem('geradorMaxLogo', state.logo);
+    $('brandLogo').src = state.logo;
+    notify('✅ Logomarca atualizada!', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== EVENTS =====
+$('searchBtn').addEventListener('click', searchTitles);
+$('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') searchTitles(); });
+$('backCatalogBtn').addEventListener('click', () => {
+  $('templateScreen').classList.add('hidden');
+  $('catalogScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Templates
+document.querySelectorAll('.template-card').forEach(el => {
+  el.addEventListener('click', () => chooseTemplate(el.dataset.template));
+});
+
+// Formatos
+document.querySelectorAll('[data-format]').forEach(el => {
+  el.addEventListener('click', () => {
+    state.format = el.dataset.format;
+    document.querySelectorAll('[data-format]').forEach(x => x.classList.toggle('active', x === el));
+    updateBanner();
+    setTimeout(scaleBanner, 50);
+  });
+});
+
+// Editor inputs
+['kickerInput','titleInput','subtitleInput'].forEach(id => {
+  $(id).addEventListener('input', updateBanner);
+});
+
+$('accentInput').addEventListener('input', e => { state.accent = e.target.value; updateBanner(); });
+$('positionSelect').addEventListener('change', e => { state.position = e.target.value; updateBanner(); });
+$('zoomRange').addEventListener('input', e => { state.zoom = Number(e.target.value); $('zoomValue').textContent = state.zoom + '%'; updateBanner(); });
+$('shadeRange').addEventListener('input', e => { state.shade = Number(e.target.value); $('shadeValue').textContent = state.shade + '%'; updateBanner(); });
+$('watermarkRange').addEventListener('input', e => { state.watermarkOpacity = Number(e.target.value); $('watermarkValue').textContent = state.watermarkOpacity + '%'; updateBanner(); });
+$('logoToggle').addEventListener('change', e => { state.showLogo = e.target.checked; updateBanner(); });
+$('metaToggle').addEventListener('change', e => { state.showMeta = e.target.checked; updateBanner(); });
+$('watermarkToggle').addEventListener('change', e => { state.showWatermark = e.target.checked; updateBanner(); });
+
+// Actions
+$('saveBtn').addEventListener('click', saveProject);
+$('downloadBtn').addEventListener('click', downloadBanner);
+$('exportBtn').addEventListener('click', exportBanner);
+$('shareResult').addEventListener('click', shareResult);
+$('downloadResult').addEventListener('click', downloadResult);
+$('closeResult').addEventListener('click', () => {
+  $('resultModal').classList.remove('show');
+  if (window._resultUrl) { URL.revokeObjectURL(window._resultUrl); window._resultUrl = null; }
+});
+$('resultModal').addEventListener('click', e => {
+  if (e.target === $('resultModal')) {
+    $('resultModal').classList.remove('show');
+    if (window._resultUrl) { URL.revokeObjectURL(window._resultUrl); window._resultUrl = null; }
+  }
+});
+$('logoUpload').addEventListener('change', handleLogoUpload);
+
+// Resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(scaleBanner, 100);
+});
+
+// ===== INIT =====
+restoreProject();
+loadCatalog();
+
+// Aplicar estado inicial
+document.querySelectorAll('[data-format]').forEach(el => {
+  el.classList.toggle('active', el.dataset.format === state.format);
+});
+document.querySelectorAll('.template-card').forEach(el => {
+  el.classList.toggle('active', el.dataset.template === state.template);
+});
+updateBanner();
+
+console.log('🚀 Gerador Max carregado com sucesso!');
+</script>
+
+</body>
+</html>
